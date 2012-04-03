@@ -158,9 +158,19 @@ module Immutable
     end
 
     def self.[](*args)
-      args.reverse_each.inject(NIL) { |x, y|
+      from_array(args)
+    end
+
+    def self.from_array(ary)
+      ary.reverse_each.inject(NIL) { |x, y|
         Cons.new(y, x)
       }
+    end
+
+    def self.from_enum(enum)
+      enum.inject(NIL) { |x, y|
+        Cons.new(y, x)
+      }.reverse
     end
 
     def null?

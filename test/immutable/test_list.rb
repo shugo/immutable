@@ -3,6 +3,17 @@ require "immutable/list"
 
 module Immutable
   class TestList < Test::Unit::TestCase
+    def test_s_from_array
+      assert_equal(List[], List.from_array([]))
+      assert_equal(List[1, 2, 3], List.from_array([1, 2, 3]))
+    end
+
+    def test_s_from_enum
+      assert_equal(List[], List.from_enum([]))
+      assert_equal(List[1, 2, 3], List.from_enum(1..3))
+      assert_equal(List["a", "b", "c"], List.from_enum("abc".chars))
+    end
+
     def test_init
       assert_raise(List::EmptyError) do
         List[].init
