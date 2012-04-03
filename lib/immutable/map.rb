@@ -1,11 +1,10 @@
 # -*- tailcall-optimization: true; trace-instruction: false -*-
 # ported from http://www.cs.kent.ac.uk/people/staff/smk/redblack/Untyped.hs
 
-require "pattern-match"
-
 module Immutable
   class Map
-    include PatternMatch::Extractable
+    class InvarianceViolationError < StandardError
+    end
 
     def self.empty
       EMPTY
@@ -20,9 +19,11 @@ module Immutable
     end
 
     def delete(key)
-      match del(key) do
-        with(EMPTY) { EMPTY }
-        with(node) { node.make_black }
+      m = del(key)
+      if m.empty?
+        m
+      else
+        m.make_black
       end
     end
 
@@ -108,127 +109,137 @@ module Immutable
       private
 
       def balance(left, key, value, right)
+        # balance (T R a x b) y (T R c z d) = T R (T B a x b) y (T B c z d)
         if left.red? && right.red?
           RedNode[left.make_black, key, value, right.make_black]
+        # balance (T R (T R a x b) y c) z d = T R (T B a x b) y (T B c z d)
         elsif left.red? && left.left.red?
-          RedNode[left.left.make_black, left.key, left.value,
-            BlackNode[left.right, key, value, right]]
+          RedNode[
+            left.left.make_black, left.key, left.value,
+            BlackNode[left.right, key, value, right]
+          ]
+        # balance (T R a x (T R b y c)) z d = T R (T B a x b) y (T B c z d)
         elsif left.red? && left.right.red?
-          RedNode[BlackNode[left.left, left.key, left.value, left.right.left],
+          RedNode[
+            BlackNode[left.left, left.key, left.value, left.right.left],
             left.right.key, left.right.value,
-            BlackNode[left.right.right, key, value, right]]
+            BlackNode[left.right.right, key, value, right]
+          ]
+        # balance a x (T R b y (T R c z d)) = T R (T B a x b) y (T B c z d)
         elsif right.red? && right.right.red?
-          RedNode[BlackNode[left, key, value, right.left],
-            right.key, right.value, right.right.make_black]
+          RedNode[
+            BlackNode[left, key, value, right.left],
+            right.key, right.value, right.right.make_black
+          ]
+        # balance a x (T R (T R b y c) z d) = T R (T B a x b) y (T B c z d)
         elsif right.red? && right.left.red?
-          RedNode[BlackNode[left, key, value, right.left.left],
+          RedNode[
+            BlackNode[left, key, value, right.left.left],
             right.left.key, right.left.value,
-            BlackNode[right.left.right, right.key, right.value, right.right]]
+            BlackNode[right.left.right, right.key, right.value, right.right]
+          ]
+        # balance a x b = T B a x b
         else
           BlackNode[left, key, value, right]
         end
       end
 
       def del_left(left, key, value, right, del_key)
-        match left do
-          with(BlackNode.(_)) { bal_left(left.del(del_key), key, value, right) }
-          with(_) { RedNode[left.del(del_key), key, value, right] }
+        if left.black?
+          bal_left(left.del(del_key), key, value, right)
+        else
+          RedNode[left.del(del_key), key, value, right]
         end
       end
 
       def del_right(left, key, value, right, del_key)
-        match right do
-          with(BlackNode.(_)) { bal_right(left, key, value, right.del(del_key)) }
-          with(_) { RedNode[left, key, value, right.del(del_key)] }
+        if right.black?
+          bal_right(left, key, value, right.del(del_key))
+        else
+          RedNode[left, key, value, right.del(del_key)]
         end
       end
 
       def bal_left(left, key, value, right)
-        match [left, key, value, right] do
-          with _[RedNode.(a, x, xv, b), y, yz, c] do
-            RedNode[BlackNode[a, x, xv, b], y, yz, c]
-          end
-          with _[bl, x, xv, BlackNode.(a, y, yv, b)] do
-            balance(bl, x, xv, RedNode[a, y, yv, b])
-          end
-          with _[bl, x, xv, RedNode.(BlackNode.(a, y, yv, b), z, zv, c)] do
-            RedNode[BlackNode[bl, x, xv, a], y, yz, balance(b, z, zv, sub1(c))]
-          end
+        if left.red?
+          RedNode[left.make_black, key, value, right]
+        elsif right.black?
+          balance(left, key, value, right.make_red)
+        elsif right.red? && right.left.black?
+          RedNode[
+            BlackNode[left, key, value, right.left.left],
+            right.left.key, right.left.value,
+            balance(right.left.right, right.key, right.value,
+                    sub1(right.right))
+          ]
+        else
+          raise ScriptError, "should not reach here"
         end
       end
 
       def bal_right(left, key, value, right)
-        match [left, key, value, right] do
-          with _[a, x, xv, RedNode.(b, y, yv, c)] do
-            RedNode[a, x, xv, BlackNode[b, y, yv, c]]
-          end
-          with _[BlackNode.(a, x, xv, b), y, yv, bl] do
-            balance(RedNode[a, x, xv, b], y, yz, bl)
-          end
-          with _[RedNode.(a, x, xv, BlackNode.(b, y, yz, c)), z, zv, bl] do
-            RedNode[balance(sub1(a), x, xv, b), y, yz, BlackNode[c, z, zv, bl]]
-          end
+        if right.red?
+          RedNode[left, key, value, right.make_black]
+        elsif left.black?
+          balance(left.make_red, key, value, right)
+        elsif left.red? && left.right.black?
+          RedNode[
+            balance(sub1(left.left), left.key, left.value, left.right.left),
+            left.right.key, left.right.value,
+            BlackNode[left.right.right, key, value, right]
+          ]
+        else
+          raise ScriptError, "should not reach here"
         end
       end
 
       def sub1(node)
-        match node do
-          with BlackNode.(a, x, xv, b) do
-            RedNode[a, x, xv, b]
-          end
-          with _ do
-            raise "invariance violation"
-          end
+        if node.black?
+          node.make_red
+        else
+          raise InvarianceViolationError, "invariance violation"
         end
       end
 
       def app(left, right)
-        match [left, right] do
-          with(_[EMPTY, x]) { x }
-          with(_[x, EMPTY]) { x }
-          with _[RedNode.(a, x, xv, b), RedNode.(c, y, yz, d)] do
-            app_RR(a, x, xv, b, c, y, yz, d)
+        if left.empty?
+          right
+        elsif right.empty?
+          left
+        elsif left.red? && right.red?
+          m = app(left.right, right.left)
+          if m.red?
+            RedNode[
+              RedNode[left.left, left.key, left.value, m.left],
+              m.key, m.value,
+              RedNode[m.right, right.key, right.value, right.right]
+            ]
+          else
+            RedNode[
+              left.left, left.key, left.value,
+              RedNode[m, right.key, right.value, right.right]
+            ]
           end
-          with _[BlackNode.(a, x, xv, b), BlackNode.(c, y, yz, d)] do
-            app_BB(a, x, xv, b, c, y, yz, d)
+        elsif left.black? && right.black?
+          m = app(left.right, right.left)
+          if m.red?
+            RedNode[
+              BlackNode[left.left, left.key, left.value, m.left],
+              m.key, m.value,
+              BlackNode[m.right, right.key, right.value, right.right]
+            ]
+          else
+            bal_left(left.left, left.key, left.value,
+                     BlackNode[m, right.key, right.value, right.right])
           end
-          with _[a, RedNode.(b, x, xv, c)] do
-            app_BR(a, b, x, xv, c)
-          end
-          with _[RedNode.(a, x, xv, b), c] do
-            app_RB(a, x, xv, b, c)
-          end
+        elsif right.red?
+          RedNode[app(left, right.left), right.key, right.value,
+            right.right]
+        elsif left.red?
+          RedNode[left.left, left.key, left.value, app(left.right, right)]
+        else
+          raise ScriptError, "should not reach here"
         end
-      end
-
-      def app_RR(a, x, xv, b, c, y, yz, d)
-        match app(b, c) do
-          with RedNode.(b2, z, zv, c2) do
-            RedNode[RedNode[a, x, xv, b2], z, zv, RedNode[c2, y, yz, d]]
-          end
-          with bc do
-            RedNode[a, x, xv, RedNode[bc, y, yz, d]]
-          end
-        end
-      end
-
-      def app_BB(a, x, xv, b, c, y, yz, d)
-        match app(b, c) do
-          with RedNode.(b2, z, zv, c2) do
-            RedNode[BlackNode[a, x, xv, b2], z, zv, BlackNode[c2, y, yz, d]]
-          end
-          with bc do
-            bal_left(a, x, xv, BlackNode[bc, y, yz, d])
-          end
-        end
-      end
-
-      def app_BR(a, b, x, xv, c)
-        RedNode[app(a, b), x, xv, c]
-      end
-
-      def app_RB(a, x, xv, b, c)
-        RedNode[a, x, xv, app(b, c)]
       end
     end
 
@@ -239,6 +250,10 @@ module Immutable
 
       def black?
         false
+      end
+
+      def make_red
+        self
       end
 
       def make_black
@@ -263,6 +278,10 @@ module Immutable
 
       def black?
         true
+      end
+
+      def make_red
+        RedNode[left, key, value, right]
       end
 
       def make_black

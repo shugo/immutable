@@ -20,7 +20,7 @@ module Immutable
       end
 
       def NIL.init
-        raise EmptyError
+        raise EmptyError, "list is empty"
       end
 
       def init
@@ -48,7 +48,7 @@ module Immutable
       end
 
       def NIL.foldl1
-        raise EmptyError
+        raise EmptyError, "list is empty"
       end
 
       def foldl1(&block)
@@ -64,7 +64,7 @@ module Immutable
       end
 
       def NIL.foldr1
-        raise EmptyError
+        raise EmptyError, "list is empty"
       end
 
       def foldr1(&block)
