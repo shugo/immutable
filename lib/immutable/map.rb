@@ -280,15 +280,3 @@ module Immutable
     end
   end
 end
-
-if __FILE__ == $0
-  require "pp"
-  tree = ("a".."z").to_a.shuffle.each_with_index.inject(RedBlack::EMPTY) {
-    |t, (k, v)|
-    t.insert(k, v)
-  }
-  p tree["a"]
-  tree2 = ("a".."g").inject(tree) { |t, k| t.delete(k) }
-  p tree2["a"]
-  p tree["a"]
-end
