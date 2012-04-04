@@ -7,7 +7,6 @@ require 'openssl'
 #random = Random.new(0)
 
 TIMES = 100000
-TIMES = 10000
 key_size = 10
 
 def aset(h, keys)
