@@ -32,11 +32,11 @@ module Immutable
       end
 
       def NIL.empty?
-        return true
+        true
       end
 
       def empty?
-        return false
+        false
       end
 
       def NIL.foldl(e)
