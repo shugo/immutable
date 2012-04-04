@@ -8,7 +8,7 @@ module Immutable
     NIL = List.new
 
     class Cons < List
-      attr_accessor :head, :tail
+      attr_reader :head, :tail
 
       def self.[](head, tail = nil)
         self.new(head, tail)
