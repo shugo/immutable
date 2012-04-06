@@ -12,18 +12,18 @@ module Immutable
   Nothing = Maybe.new
 
   class Just < Maybe
-    attr_reader :value
+    attr_reader :values
 
-    def self.[](value)
-      new(value)
+    def self.[](*values)
+      new(*values)
     end
 
-    def initialize(value)
-      @value = value
+    def initialize(*values)
+      @values = values
     end
     
     def ==(other)
-      other.just? && @value == other.value
+      other.just? && @values == other.values
     end
 
     def Nothing.bind
@@ -31,7 +31,7 @@ module Immutable
     end
 
     def bind
-      yield(@value)
+      yield(*@values)
     end
 
     def Nothing.inspect
@@ -39,7 +39,7 @@ module Immutable
     end
 
     def inspect
-      "Just[" + @value.inspect + "]"
+      "Just[" + @values.inject(:inspect).join(", ") + "]"
     end
   end
 end

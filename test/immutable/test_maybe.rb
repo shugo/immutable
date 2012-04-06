@@ -18,6 +18,7 @@ module Immutable
       assert_equal(Nothing, x)
       x = Just[4].bind { |y| quo(2, y) }.bind { |y| Just[y ** 2] }
       assert_equal(Just[Rational(1, 4)], x)
+      assert_equal(Just[5], Just[2, 3].bind { |x, y| Just[x + y] })
     end
   end
 end

@@ -228,5 +228,15 @@ module Immutable
     def product
       foldl(1, &:*)
     end
+
+    def self.unfoldr(e, &block)
+      x = yield(e)
+      if x.nothing?
+        NIL
+      else
+        y, z = *x.values
+        Cons[y, unfoldr(z, &block)]
+      end
+    end
   end
 end

@@ -197,5 +197,25 @@ module Immutable
       assert_equal(1, List[1].product)
       assert_equal(24, List[1, 2, 3, 4].product)
     end
+
+    def test_s_unfoldr
+      xs = List.unfoldr(3) { |x|
+        if x == 0
+          Nothing
+        else
+          Just[x, x - 1]
+        end
+      }
+      assert_equal(List[3, 2, 1], xs)
+      xs = List.unfoldr("foo,bar,baz") { |x|
+        if x.empty?
+          Nothing
+        else
+          y = x.slice(/([^,]*),?/, 1)
+          Just[y, $']
+        end
+      }
+      assert_equal(List["foo", "bar", "baz"], xs)
+    end
   end
 end
