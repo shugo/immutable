@@ -42,6 +42,14 @@ module Immutable
       } + "]"
     end
 
+    def foldr(e)
+      foldr_with_key(e) { |k, v, x| yield(v, x) }
+    end
+
+    def foldl(e)
+      foldl_with_key(e) { |x, k, v| yield(x, v) }
+    end
+
     EMPTY = Map.new
 
     def EMPTY.empty?

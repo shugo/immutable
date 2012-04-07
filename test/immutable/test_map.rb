@@ -48,6 +48,32 @@ module Immutable
       end
     end
 
+    def test_foldr
+      xs = Map[].foldr(List[]) { |v, ys| Cons[v, ys] }
+      assert_equal(List[], xs)
+
+      xs = Map[a: 1, c: 3, b: 2].foldr(List[]) { |v, ys| Cons[v, ys] }
+      assert_equal(List[1, 2, 3], xs)
+    end
+
+    def test_foldl
+      xs = Map[].foldl(List[]) { |ys, v| Cons[v, ys] }
+      assert_equal(List[], xs)
+
+      xs = Map[a: 1, c: 3, b: 2].foldl(List[]) { |ys, v| Cons[v, ys] }
+      assert_equal(List[3, 2, 1], xs)
+    end
+
+    def test_foldl_with_key
+      xs = Map[].foldl_with_key(List[]) { |ys, k, v| Cons[[k, v], ys] }
+      assert_equal(List[], xs)
+
+      xs = Map[a: 1, c: 3, b: 2].foldl_with_key(List[]) { |ys, k, v|
+        Cons[[k, v], ys]
+      }
+      assert_equal(List[[:c, 3], [:b, 2], [:a, 1]], xs)
+    end
+
     def test_foldr_with_key
       xs = Map[].foldr_with_key(List[]) { |k, v, ys| Cons[[k, v], ys] }
       assert_equal(List[], xs)
