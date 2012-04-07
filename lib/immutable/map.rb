@@ -50,6 +50,14 @@ module Immutable
       foldl_with_key(e) { |x, k, v| yield(x, v) }
     end
 
+    def map
+      map_with_key { |k, v| yield(v) }
+    end
+
+    def map_with_key
+      foldr_with_key(List[]) { |k, v, xs| Cons[yield(k, v), xs] }
+    end
+
     Leaf = Map.new
 
     def Leaf.empty?

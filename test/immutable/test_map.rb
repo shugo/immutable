@@ -93,5 +93,21 @@ module Immutable
       }
       assert_equal(List[[:c, 3], [:b, 2], [:a, 1]], xs)
     end
+
+    def test_map
+      xs = Map[].map { |v| v.to_s }
+      assert_equal(List[], xs)
+
+      xs = Map[a: 1, c: 3, b: 2].map { |v| v.to_s }
+      assert_equal(List["1", "2", "3"], xs)
+    end
+
+    def test_map_with_key
+      xs = Map[].map_with_key { |k, v| [k, v].join(":") }
+      assert_equal(List[], xs)
+
+      xs = Map[a: 1, c: 3, b: 2].map_with_key { |k, v| [k, v].join(":") }
+      assert_equal(List["a:1", "b:2", "c:3"], xs)
+    end
   end
 end
