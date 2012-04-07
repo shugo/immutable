@@ -14,6 +14,10 @@ module Immutable
       EMPTY.insert(key, value)
     end
 
+    def self.[](h = {})
+      h.inject(EMPTY) { |m, (k, v)| m.insert(k, v) }
+    end
+
     def insert(key, value)
       ins(key, value).make_black
     end
@@ -25,6 +29,17 @@ module Immutable
       else
         m.make_black
       end
+    end
+
+    def inspect
+      "Map[" + foldr_with_key("") { |k, v, s|
+        x = k.inspect + " => " + v.inspect
+        if s.empty?
+          x
+        else
+          x + ", " + s
+        end
+      } + "]"
     end
 
     EMPTY = Map.new
@@ -39,10 +54,6 @@ module Immutable
 
     def EMPTY.black?
       true
-    end
-
-    def EMPTY.inspect
-      "Map::EMPTY"
     end
 
     def EMPTY.[](key)
@@ -104,6 +115,24 @@ module Immutable
         left.each(&block)
         yield key, value
         right.each(&block)
+      end
+
+      def EMPTY.foldr_with_key(e)
+        e
+      end
+
+      def foldr_with_key(e, &block)
+        r = @right.foldr_with_key(e, &block)
+        @left.foldr_with_key(yield(@key, @value, r), &block)
+      end
+
+      def EMPTY.foldl_with_key(e)
+        e
+      end
+
+      def foldl_with_key(e, &block)
+        l = @left.foldl_with_key(e, &block)
+        @right.foldl_with_key(yield(l, @key, @value), &block)
       end
 
       private
