@@ -199,13 +199,7 @@ module Immutable
     end
 
     def test_s_unfoldr
-      xs = List.unfoldr(3) { |x|
-        if x == 0
-          Nothing
-        else
-          Just[x, x - 1]
-        end
-      }
+      xs = List.unfoldr(3) { |x| x == 0 ? Nothing : Just[x, x - 1] }
       assert_equal(List[3, 2, 1], xs)
       xs = List.unfoldr("foo,bar,baz") { |x|
         if x.empty?
