@@ -3,6 +3,19 @@ require "immutable/maybe"
 
 module Immutable
   class TestList < Test::Unit::TestCase
+    def test_eq
+      assert(Nothing == Nothing)
+      assert(Nothing != Just[1])
+      assert(Just[1] != Nothing)
+      assert(Just[1] == Just[1])
+      assert(Just[1] != Just[2])
+      assert(Just[1, 2] == Just[1, 2])
+      assert(Just[1] != Just[1, 2])
+      assert(Just[1, 2] != Just[1])
+      assert(Nothing != nil)
+      assert(Just[1] != 1)
+    end
+
     def quo(x, y)
       if y == 0
         Nothing

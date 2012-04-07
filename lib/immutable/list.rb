@@ -92,6 +92,18 @@ module Immutable
           @tail.foldl("") {|x, y| x + ", " + y.inspect } + "]"
       end
 
+      def NIL.find
+        Nothing
+      end
+
+      def find(&block)
+        if yield(@head)
+          Just[@head]
+        else
+          @tail.find(&block)
+        end
+      end
+
       def NIL.intersperse(sep)
         NIL
       end

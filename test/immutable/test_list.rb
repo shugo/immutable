@@ -123,6 +123,12 @@ module Immutable
       assert_equal(List["1", "2", "3"], List[1, 2, 3].map(&:to_s))
     end
 
+    def test_find
+      assert_equal(Nothing, List[].find(&:odd?))
+      assert_equal(Just[1], List[1, 2, 3, 4, 5].find(&:odd?))
+      assert_equal(Just[2], List[1, 2, 3, 4, 5].find(&:even?))
+    end
+
     def test_filter
       assert_equal(List[], List[].filter(&:odd?))
       assert_equal(List[1, 3, 5], List[1, 2, 3, 4, 5].filter(&:odd?))

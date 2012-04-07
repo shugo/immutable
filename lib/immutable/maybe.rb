@@ -24,6 +24,8 @@ module Immutable
     
     def ==(other)
       other.just? && @values == other.values
+    rescue NoMethodError
+      false
     end
 
     def Nothing.bind
