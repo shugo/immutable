@@ -14,6 +14,30 @@ module Immutable
       assert_equal(List["a", "b", "c"], List.from_enum("abc".chars))
     end
 
+    def test_head
+      assert_raise(List::EmptyError) do
+        List[].head
+      end
+      assert_equal(1, List[1].head)
+      assert_equal(1, List[1, 2, 3].head)
+    end
+
+    def test_last
+      assert_raise(List::EmptyError) do
+        List[].last
+      end
+      assert_equal(1, List[1].last)
+      assert_equal(3, List[1, 2, 3].last)
+    end
+
+    def test_tail
+      assert_raise(List::EmptyError) do
+        List[].tail
+      end
+      assert_equal(List[], List[1].tail)
+      assert_equal(List[2, 3], List[1, 2, 3].tail)
+    end
+
     def test_init
       assert_raise(List::EmptyError) do
         List[].init
