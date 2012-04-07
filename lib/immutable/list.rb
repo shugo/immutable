@@ -1,5 +1,7 @@
 # -*- tailcall-optimization: true; trace-instruction: false -*-
 
+require "immutable/maybe"
+
 module Immutable
   class List
     class EmptyError < StandardError
@@ -214,6 +216,7 @@ module Immutable
     end
 
     alias concat_map flat_map
+    alias bind flat_map
 
     def filter
       foldr(NIL) { |x, xs|
