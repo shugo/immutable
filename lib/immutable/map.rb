@@ -7,15 +7,15 @@ module Immutable
     end
 
     def self.empty
-      EMPTY
+      Leaf
     end
 
     def self.singleton(key, value)
-      EMPTY.insert(key, value)
+      Leaf.insert(key, value)
     end
 
     def self.[](h = {})
-      h.inject(EMPTY) { |m, (k, v)| m.insert(k, v) }
+      h.inject(Leaf) { |m, (k, v)| m.insert(k, v) }
     end
 
     def insert(key, value)
@@ -50,36 +50,36 @@ module Immutable
       foldl_with_key(e) { |x, k, v| yield(x, v) }
     end
 
-    EMPTY = Map.new
+    Leaf = Map.new
 
-    def EMPTY.empty?
+    def Leaf.empty?
       true
     end
 
-    def EMPTY.red?
+    def Leaf.red?
       false
     end
 
-    def EMPTY.black?
+    def Leaf.black?
       true
     end
 
-    def EMPTY.[](key)
+    def Leaf.[](key)
       nil
     end
 
-    def EMPTY.ins(key, value)
-      RedNode[EMPTY, key, value, EMPTY]
+    def Leaf.ins(key, value)
+      RedFork[Leaf, key, value, Leaf]
     end
 
-    def EMPTY.del(key)
-      EMPTY
+    def Leaf.del(key)
+      Leaf
     end
 
-    def EMPTY.each
+    def Leaf.each
     end
 
-    class Node < Map
+    class Fork < Map
       attr_reader :left, :key, :value, :right
 
       def initialize(left, key, value, right)
@@ -125,7 +125,7 @@ module Immutable
         right.each(&block)
       end
 
-      def EMPTY.foldr_with_key(e)
+      def Leaf.foldr_with_key(e)
         e
       end
 
@@ -134,7 +134,7 @@ module Immutable
         @left.foldr_with_key(yield(@key, @value, r), &block)
       end
 
-      def EMPTY.foldl_with_key(e)
+      def Leaf.foldl_with_key(e)
         e
       end
 
@@ -148,36 +148,36 @@ module Immutable
       def balance(left, key, value, right)
         # balance (T R a x b) y (T R c z d) = T R (T B a x b) y (T B c z d)
         if left.red? && right.red?
-          RedNode[left.make_black, key, value, right.make_black]
+          RedFork[left.make_black, key, value, right.make_black]
         # balance (T R (T R a x b) y c) z d = T R (T B a x b) y (T B c z d)
         elsif left.red? && left.left.red?
-          RedNode[
+          RedFork[
             left.left.make_black, left.key, left.value,
-            BlackNode[left.right, key, value, right]
+            BlackFork[left.right, key, value, right]
           ]
         # balance (T R a x (T R b y c)) z d = T R (T B a x b) y (T B c z d)
         elsif left.red? && left.right.red?
-          RedNode[
-            BlackNode[left.left, left.key, left.value, left.right.left],
+          RedFork[
+            BlackFork[left.left, left.key, left.value, left.right.left],
             left.right.key, left.right.value,
-            BlackNode[left.right.right, key, value, right]
+            BlackFork[left.right.right, key, value, right]
           ]
         # balance a x (T R b y (T R c z d)) = T R (T B a x b) y (T B c z d)
         elsif right.red? && right.right.red?
-          RedNode[
-            BlackNode[left, key, value, right.left],
+          RedFork[
+            BlackFork[left, key, value, right.left],
             right.key, right.value, right.right.make_black
           ]
         # balance a x (T R (T R b y c) z d) = T R (T B a x b) y (T B c z d)
         elsif right.red? && right.left.red?
-          RedNode[
-            BlackNode[left, key, value, right.left.left],
+          RedFork[
+            BlackFork[left, key, value, right.left.left],
             right.left.key, right.left.value,
-            BlackNode[right.left.right, right.key, right.value, right.right]
+            BlackFork[right.left.right, right.key, right.value, right.right]
           ]
         # balance a x b = T B a x b
         else
-          BlackNode[left, key, value, right]
+          BlackFork[left, key, value, right]
         end
       end
 
@@ -185,7 +185,7 @@ module Immutable
         if left.black?
           bal_left(left.del(del_key), key, value, right)
         else
-          RedNode[left.del(del_key), key, value, right]
+          RedFork[left.del(del_key), key, value, right]
         end
       end
 
@@ -193,18 +193,18 @@ module Immutable
         if right.black?
           bal_right(left, key, value, right.del(del_key))
         else
-          RedNode[left, key, value, right.del(del_key)]
+          RedFork[left, key, value, right.del(del_key)]
         end
       end
 
       def bal_left(left, key, value, right)
         if left.red?
-          RedNode[left.make_black, key, value, right]
+          RedFork[left.make_black, key, value, right]
         elsif right.black?
           balance(left, key, value, right.make_red)
         elsif right.red? && right.left.black?
-          RedNode[
-            BlackNode[left, key, value, right.left.left],
+          RedFork[
+            BlackFork[left, key, value, right.left.left],
             right.left.key, right.left.value,
             balance(right.left.right, right.key, right.value,
                     sub1(right.right))
@@ -216,14 +216,14 @@ module Immutable
 
       def bal_right(left, key, value, right)
         if right.red?
-          RedNode[left, key, value, right.make_black]
+          RedFork[left, key, value, right.make_black]
         elsif left.black?
           balance(left.make_red, key, value, right)
         elsif left.red? && left.right.black?
-          RedNode[
+          RedFork[
             balance(sub1(left.left), left.key, left.value, left.right.left),
             left.right.key, left.right.value,
-            BlackNode[left.right.right, key, value, right]
+            BlackFork[left.right.right, key, value, right]
           ]
         else
           raise ScriptError, "should not reach here"
@@ -246,41 +246,41 @@ module Immutable
         elsif left.red? && right.red?
           m = app(left.right, right.left)
           if m.red?
-            RedNode[
-              RedNode[left.left, left.key, left.value, m.left],
+            RedFork[
+              RedFork[left.left, left.key, left.value, m.left],
               m.key, m.value,
-              RedNode[m.right, right.key, right.value, right.right]
+              RedFork[m.right, right.key, right.value, right.right]
             ]
           else
-            RedNode[
+            RedFork[
               left.left, left.key, left.value,
-              RedNode[m, right.key, right.value, right.right]
+              RedFork[m, right.key, right.value, right.right]
             ]
           end
         elsif left.black? && right.black?
           m = app(left.right, right.left)
           if m.red?
-            RedNode[
-              BlackNode[left.left, left.key, left.value, m.left],
+            RedFork[
+              BlackFork[left.left, left.key, left.value, m.left],
               m.key, m.value,
-              BlackNode[m.right, right.key, right.value, right.right]
+              BlackFork[m.right, right.key, right.value, right.right]
             ]
           else
             bal_left(left.left, left.key, left.value,
-                     BlackNode[m, right.key, right.value, right.right])
+                     BlackFork[m, right.key, right.value, right.right])
           end
         elsif right.red?
-          RedNode[app(left, right.left), right.key, right.value,
+          RedFork[app(left, right.left), right.key, right.value,
             right.right]
         elsif left.red?
-          RedNode[left.left, left.key, left.value, app(left.right, right)]
+          RedFork[left.left, left.key, left.value, app(left.right, right)]
         else
           raise ScriptError, "should not reach here"
         end
       end
     end
 
-    class RedNode < Node
+    class RedFork < Fork
       def red?
         true
       end
@@ -294,21 +294,21 @@ module Immutable
       end
 
       def make_black
-        BlackNode[left, key, value, right]
+        BlackFork[left, key, value, right]
       end
 
       def ins(key, value)
         if key < self.key
-          RedNode[left.ins(key, value), self.key, self.value, right]
+          RedFork[left.ins(key, value), self.key, self.value, right]
         elsif key > self.key
-          RedNode[left, self.key, self.value, right.ins(key, value)]
+          RedFork[left, self.key, self.value, right.ins(key, value)]
         else
-          RedNode[left, key, value, right]
+          RedFork[left, key, value, right]
         end
       end
     end
 
-    class BlackNode < Node
+    class BlackFork < Fork
       def red?
         false
       end
@@ -318,7 +318,7 @@ module Immutable
       end
 
       def make_red
-        RedNode[left, key, value, right]
+        RedFork[left, key, value, right]
       end
 
       def make_black
@@ -331,7 +331,7 @@ module Immutable
         elsif key > self.key
           balance(left, self.key, self.value, right.ins(key, value))
         else
-          BlackNode[left, key, value, right]
+          BlackFork[left, key, value, right]
         end
       end
     end
