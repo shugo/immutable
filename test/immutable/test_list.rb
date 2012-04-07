@@ -28,25 +28,6 @@ module Immutable
       assert(!List[1, 2, 3].empty?)
     end
 
-    def test_foldl
-      assert_equal(0, List[].foldl(0, &:+))
-      assert_equal(123, List[].foldl(123, &:+))
-
-      assert_equal(6, List[1, 2, 3].foldl(0, &:+))
-      # ((10 - 1) - 2) - 3
-      assert_equal(4, List[1, 2, 3].foldl(10, &:-))
-    end
-
-    def test_foldl1
-      assert_raise(List::EmptyError) do
-        List[].foldl1(&:+)
-      end
-      assert_equal(1, List[1].foldl1(&:+))
-      assert_equal(3, List[1, 2].foldl1(&:+))
-      assert_equal(6, List[1, 2, 3].foldl1(&:+))
-      assert_equal(-4, List[1, 2, 3].foldl1(&:-))
-    end
-
     def test_foldr
       assert_equal(0, List[].foldr(0, &:+))
       assert_equal(123, List[].foldr(123, &:+))
@@ -64,6 +45,25 @@ module Immutable
       assert_equal(3, List[1, 2].foldr1(&:+))
       assert_equal(6, List[1, 2, 3].foldr1(&:+))
       assert_equal(2, List[1, 2, 3].foldr1(&:-))
+    end
+
+    def test_foldl
+      assert_equal(0, List[].foldl(0, &:+))
+      assert_equal(123, List[].foldl(123, &:+))
+
+      assert_equal(6, List[1, 2, 3].foldl(0, &:+))
+      # ((10 - 1) - 2) - 3
+      assert_equal(4, List[1, 2, 3].foldl(10, &:-))
+    end
+
+    def test_foldl1
+      assert_raise(List::EmptyError) do
+        List[].foldl1(&:+)
+      end
+      assert_equal(1, List[1].foldl1(&:+))
+      assert_equal(3, List[1, 2].foldl1(&:+))
+      assert_equal(6, List[1, 2, 3].foldl1(&:+))
+      assert_equal(-4, List[1, 2, 3].foldl1(&:-))
     end
 
     def test_eq

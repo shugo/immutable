@@ -125,22 +125,6 @@ module Immutable
       false
     end
 
-    def Nil.foldl(e)
-      e
-    end
-
-    def foldl(e, &block)
-      @tail.foldl(yield(e, @head), &block)
-    end
-
-    def Nil.foldl1
-      raise EmptyError, "list is empty"
-    end
-
-    def foldl1(&block)
-      @tail.foldl(@head, &block)
-    end
-
     def Nil.foldr(e)
       e
     end
@@ -159,6 +143,22 @@ module Immutable
       else
         yield(@head, @tail.foldr1(&block))
       end
+    end
+
+    def Nil.foldl(e)
+      e
+    end
+
+    def foldl(e, &block)
+      @tail.foldl(yield(e, @head), &block)
+    end
+
+    def Nil.foldl1
+      raise EmptyError, "list is empty"
+    end
+
+    def foldl1(&block)
+      @tail.foldl(@head, &block)
     end
 
     def ==(xs)
