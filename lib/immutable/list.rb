@@ -29,7 +29,8 @@ module Immutable
       from_array(args)
     end
 
-    # Converts the given array +ary+ to a list.
+    # Converts the given array +ary+ to a list. +ary+ should respond to
+    # <code>reverse_each</code>.
     def self.from_array(ary)
       ary.reverse_each.inject(Nil) { |x, y|
         Cons.new(y, x)
