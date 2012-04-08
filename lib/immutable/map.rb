@@ -2,26 +2,59 @@
 # ported from http://www.cs.kent.ac.uk/people/staff/smk/redblack/Untyped.hs
 
 module Immutable
+  # <code>Immutable::Map</code> represents an immutable map from keys to
+  # values.
+  #
+  # <code>Immutable::Map</code> is an abstract class and
+  # <code>Immutable::Map.[]</code> should be used instead of
+  # <code>Immutable::Map.new</code>. For example:
+  #
+  #   include Immutable
+  #   p Map[]            #=> Map[]
+  #   p Map[a: 1, b: 2]  #=> Map[:a => 1, :b => 2]
+  #
+  # <code>Immutable::Map#insert</code> inserts a key/value pair and
+  # returns a new <code>Immutable::Map</code>. The original map never be
+  # changed by <code>Immutable::Map#insert</code>. For example:
+  #
+  #   m = Map[a: 1]
+  #   p m   #=> Map[:a => 1]
+  #   m2 = m.insert(:b, 2)
+  #   p m2  #=> Map[:a => 1, :b => 2]
+  #   p m   #=> Map[:a => 1]
   class Map
     class InvarianceViolationError < StandardError
     end
 
+    # Returns an empty map.
     def self.empty
       Leaf
     end
 
+    # Returns a map that has only one pair whose key is +key+ and whose
+    # value is +value+.
     def self.singleton(key, value)
       Leaf.insert(key, value)
     end
 
+    # Returns a map that has the same key/value pairs as the
+    # <code>Hash</code> object +h+.
     def self.[](h = {})
       h.inject(Leaf) { |m, (k, v)| m.insert(k, v) }
     end
 
+    # Inserts +key+/+value+ in +self+.
     def insert(key, value)
       ins(key, value).make_black
     end
 
+    # Returns the value at +key+ in +self+, or <code>nil</code> if +key+
+    # isn't in +self+.
+    def [](key)
+      raise ScriptError, "this method should be overriden"
+    end
+
+    # Deletes +key+ and its value from +self+.
     def delete(key)
       m = del(key)
       if m.empty?
@@ -42,22 +75,27 @@ module Immutable
       } + "]"
     end
 
+    # Folds the values in +self+ from right to left.
     def foldr(e)
       foldr_with_key(e) { |k, v, x| yield(v, x) }
     end
 
+    # Folds the values in +self+ from left to right.
     def foldl(e)
       foldl_with_key(e) { |x, k, v| yield(x, v) }
     end
 
+    # Maps the given block over all values in +self+.
     def map
       map_with_key { |k, v| yield(v) }
     end
 
+    # Maps the given block over all keys and values in +self+.
     def map_with_key
       foldr_with_key(List[]) { |k, v, xs| Cons[yield(k, v), xs] }
     end
 
+    # :nodoc:
     Leaf = Map.new
 
     def Leaf.empty?
@@ -87,7 +125,7 @@ module Immutable
     def Leaf.each
     end
 
-    class Fork < Map
+    class Fork < Map  #:nodoc:
       attr_reader :left, :key, :value, :right
 
       def initialize(left, key, value, right)
@@ -288,7 +326,7 @@ module Immutable
       end
     end
 
-    class RedFork < Fork
+    class RedFork < Fork  #:nodoc:
       def red?
         true
       end
@@ -316,7 +354,7 @@ module Immutable
       end
     end
 
-    class BlackFork < Fork
+    class BlackFork < Fork  #:nodoc:
       def red?
         false
       end
