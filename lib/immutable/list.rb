@@ -36,7 +36,8 @@ module Immutable
       }
     end
 
-    # Converts +enum+ to a list. +enum+ should respond to <code>each</code>.
+    # Converts +enum+ to a list. +enum+ should respond to
+    # <code>inject</code>.
     def self.from_enum(enum)
       enum.inject(Nil) { |x, y|
         Cons.new(y, x)
