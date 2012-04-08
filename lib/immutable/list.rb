@@ -386,10 +386,9 @@ module Immutable
       if @head == Nil
         @tail.transpose
       else
-        Cons[Cons[@head.head,
-          @tail.filter {|x| !x.empty?}.map(&:head)],
-          Cons[@head.tail,
-            @tail.filter {|x| !x.empty?}.map(&:tail)].transpose]
+        tail = @tail.filter { |x| !x.empty? }
+        Cons[Cons[@head.head, tail.map(&:head)],
+          Cons[@head.tail, tail.map(&:tail)].transpose]
       end
     end
 
