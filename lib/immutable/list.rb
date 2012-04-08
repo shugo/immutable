@@ -30,6 +30,11 @@ module Immutable
       }.reverse
     end
 
+    # Appends two lists +self+ and +xs+.
+    def +(xs)
+      foldr(xs) { |y, ys| Cons[y, ys] }
+    end
+
     # Returns the first element of +self+. If +self+ is empty,
     # <code>Immutable::List::EmptyError</code> is raised.
     def head
@@ -78,48 +83,20 @@ module Immutable
 
     alias size length
 
-    # Appends two lists +self+ and +xs+.
-    def +(xs)
-      foldr(xs) { |y, ys| Cons[y, ys] }
-    end
-
-    # Concatenates a list of lists.
-    def flatten
-      foldr(Nil) { |x, xs| x + xs }
-    end
-
-    alias concat flatten
-
     # Returns the list obtained by applying the given block to each element
     # in +self+.
     def map
       foldr(Nil) { |x, xs| Cons[yield(x), xs] }
     end
 
-    # Returns the list obtained by concatenating the results of the given
-    # block for each element in +self+.
-    def flat_map
-      foldr(Nil) { |x, xs| yield(x) + xs }
-    end
-
-    alias concat_map flat_map
-    alias bind flat_map
-
-    # Returns the elements in +self+ for which the given block evaluates to
-    # true.
-    def filter
-      foldr(Nil) { |x, xs|
-        if yield(x)
-          Cons[x, xs]
-        else
-          xs
-        end
-      }
-    end
-
     # Returns the elements of +self+ in reverse order.
     def reverse
       foldl(Nil) { |x, y| Cons[y, x] }
+    end
+
+    # Inserts +xs+ in between the lists in +self+.
+    def intersperse(xs)
+      raise ScriptError, "this method should be overriden"
     end
 
     # Inserts +xs+ in between the lists in +self+ and concatenates the
@@ -129,6 +106,54 @@ module Immutable
     def intercalate(xs)
       intersperse(xs).flatten
     end
+
+    # Reduces +self+ using +block+ from right to left. +e+ is used as the
+    # starting value. For example:
+    #
+    #   List[1, 2, 3].foldr(9) { |x, y| x + y } #=> 1 - (2 - (3 - 9)) = -7
+    def foldr(e, &block)
+      raise ScriptError, "this method should be overriden"
+    end
+
+    # Reduces +self+ using +block+ from right to left. If +self+ is empty,
+    # <code>Immutable::List::EmptyError</code> is raised.
+    def foldr1(&block)
+      raise ScriptError, "this method should be overriden"
+    end
+
+    # Reduces +self+ using +block+ from left to right. +e+ is used as the
+    # starting value. For example:
+    #
+    #   List[1, 2, 3].foldl(9) { |x, y| x + y } #=> ((9 - 1) - 2) - 3 = 3
+    def foldl(e, &block)
+      raise ScriptError, "this method should be overriden"
+    end
+
+    # Reduces +self+ using +block+ from left to right. If +self+ is empty,
+    # <code>Immutable::List::EmptyError</code> is raised.
+    def foldl1(&block)
+      raise ScriptError, "this method should be overriden"
+    end
+
+    # Concatenates a list of lists.
+    def flatten
+      foldr(Nil) { |x, xs| x + xs }
+    end
+
+    # An alias of <code>flatten</code>.
+    alias concat flatten
+
+    # Returns the list obtained by concatenating the results of the given
+    # block for each element in +self+.
+    def flat_map
+      foldr(Nil) { |x, xs| yield(x) + xs }
+    end
+
+    # An alias of <code>flat_map</code>.
+    alias concat_map flat_map
+
+    # An alias of <code>flat_map</code>.
+    alias bind flat_map
 
     # Computes the sum of the numbers in +self+.
     def sum
@@ -141,9 +166,10 @@ module Immutable
     end
 
     # Builds a list from the seed value +e+ and the given block. The block
-    # takes a seed value and returns Nothing if the seed should unfold to
-    # the empty list, or returns Just[a, b], where a is the head of the list
-    # and b is the next seed from which to unfold the tail.  For example:
+    # takes a seed value and returns <code>Nothing</code> if the seed should
+    # unfold to the empty list, or returns <code>Just[a, b]</code>, where
+    # <code>a</code> is the head of the list and <code>b</code> is the next
+    # seed from which to unfold the tail.  For example:
     #
     #   xs = List.unfoldr(3) { |x| x == 0 ? Nothing : Just[x, x - 1] }
     #   p xs #=> List[3, 2, 1]
@@ -157,6 +183,47 @@ module Immutable
         y, z = *x.values
         Cons[y, unfoldr(z, &block)]
       end
+    end
+
+    # Returns the first +n+ elements of +self+, or +self+ itself if
+    # <code>n > self.length</code>.
+    def take(n)
+    end
+
+
+    # Returns the suffix of +self+ after the first +n+ elements, or
+    # <code>List[]</code> if <code>n > self.length</code>.
+    def drop(n)
+    end
+
+    # Returns the longest prefix of the elements of +self+ for which +block+
+    # evaluates to true.
+    def take_while(&block)
+    end
+
+    # Returns the suffix remaining after
+    # <code>self.take_while(&block)</code>.
+    def drop_while(&block)
+    end
+
+    # Returns the first element in +self+ for which the given block
+    # evaluates to true.  If such an element <code>a</code> is found, it
+    # returns <code>Just[a]</code>, otherwise, it returns
+    # <code>Nothing</code>.
+    def find(&block)
+      raise ScriptError, "this method should be overriden"
+    end
+
+    # Returns the elements in +self+ for which the given block evaluates to
+    # true.
+    def filter
+      foldr(Nil) { |x, xs|
+        if yield(x)
+          Cons[x, xs]
+        else
+          xs
+        end
+      }
     end
   end
 
@@ -271,18 +338,6 @@ module Immutable
         @tail.foldl("") {|x, y| x + ", " + y.inspect } + "]"
     end
 
-    def Nil.find
-      Nothing
-    end
-
-    def find(&block)
-      if yield(@head)
-        Just[@head]
-      else
-        @tail.find(&block)
-      end
-    end
-
     def Nil.intersperse(sep)
       Nil
     end
@@ -344,6 +399,18 @@ module Immutable
         @tail.drop_while(&block)
       else
         self
+      end
+    end
+
+    def Nil.find
+      Nothing
+    end
+
+    def find(&block)
+      if yield(@head)
+        Just[@head]
+      else
+        @tail.find(&block)
       end
     end
   end
