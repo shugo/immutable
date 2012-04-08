@@ -201,22 +201,26 @@ module Immutable
     # Returns the first +n+ elements of +self+, or +self+ itself if
     # <code>n > self.length</code>.
     def take(n)
+      raise ScriptError, "this method should be overriden"
     end
 
 
     # Returns the suffix of +self+ after the first +n+ elements, or
     # <code>List[]</code> if <code>n > self.length</code>.
     def drop(n)
+      raise ScriptError, "this method should be overriden"
     end
 
     # Returns the longest prefix of the elements of +self+ for which +block+
     # evaluates to true.
     def take_while(&block)
+      raise ScriptError, "this method should be overriden"
     end
 
     # Returns the suffix remaining after
     # <code>self.take_while(&block)</code>.
     def drop_while(&block)
+      raise ScriptError, "this method should be overriden"
     end
 
     # Returns the first element in +self+ for which the given block
