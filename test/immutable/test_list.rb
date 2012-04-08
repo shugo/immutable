@@ -148,9 +148,9 @@ module Immutable
     end
 
     def test_find
-      assert_equal(Nothing, List[].find(&:odd?))
-      assert_equal(Just[1], List[1, 2, 3, 4, 5].find(&:odd?))
-      assert_equal(Just[2], List[1, 2, 3, 4, 5].find(&:even?))
+      assert_equal(nil, List[].find(&:odd?))
+      assert_equal(1, List[1, 2, 3, 4, 5].find(&:odd?))
+      assert_equal(2, List[1, 2, 3, 4, 5].find(&:even?))
     end
 
     def test_filter
@@ -229,14 +229,14 @@ module Immutable
     end
 
     def test_s_unfoldr
-      xs = List.unfoldr(3) { |x| x == 0 ? Nothing : Just[x, x - 1] }
+      xs = List.unfoldr(3) { |x| x == 0 ? nil : [x, x - 1] }
       assert_equal(List[3, 2, 1], xs)
       xs = List.unfoldr("foo,bar,baz") { |x|
         if x.empty?
-          Nothing
+          nil
         else
           y = x.slice(/([^,]*),?/, 1)
-          Just[y, $']
+          [y, $']
         end
       }
       assert_equal(List["foo", "bar", "baz"], xs)

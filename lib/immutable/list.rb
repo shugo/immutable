@@ -1,7 +1,5 @@
 # -*- tailcall-optimization: true; trace-instruction: false -*-
 
-require "immutable/maybe"
-
 module Immutable
   # <code>Immutable::List</code> represents an immutable list.
   #
@@ -181,21 +179,21 @@ module Immutable
     end
 
     # Builds a list from the seed value +e+ and the given block. The block
-    # takes a seed value and returns <code>Nothing</code> if the seed should
-    # unfold to the empty list, or returns <code>Just[a, b]</code>, where
+    # takes a seed value and returns <code>nil</code> if the seed should
+    # unfold to the empty list, or returns <code>[a, b]</code>, where
     # <code>a</code> is the head of the list and <code>b</code> is the next
     # seed from which to unfold the tail.  For example:
     #
-    #   xs = List.unfoldr(3) { |x| x == 0 ? Nothing : Just[x, x - 1] }
+    #   xs = List.unfoldr(3) { |x| x == 0 ? nil : [x, x - 1] }
     #   p xs #=> List[3, 2, 1]
     #
     # <code>unfoldr</code> is the dual of <code>foldr</code>.
     def self.unfoldr(e, &block)
       x = yield(e)
-      if x.nothing?
+      if x.nil?
         Nil
       else
-        y, z = *x.values
+        y, z = x
         Cons[y, unfoldr(z, &block)]
       end
     end
@@ -222,9 +220,8 @@ module Immutable
     end
 
     # Returns the first element in +self+ for which the given block
-    # evaluates to true.  If such an element <code>a</code> is found, it
-    # returns <code>Just[a]</code>, otherwise, it returns
-    # <code>Nothing</code>.
+    # evaluates to true.  If such an element is not found, it
+    # returns <code>nil</code>.
     def find(&block)
       raise ScriptError, "this method should be overriden"
     end
@@ -418,12 +415,12 @@ module Immutable
     end
 
     def Nil.find
-      Nothing
+      nil
     end
 
     def find(&block)
       if yield(@head)
-        Just[@head]
+        @head
       else
         @tail.find(&block)
       end
