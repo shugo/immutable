@@ -3,7 +3,22 @@
 require "immutable/maybe"
 
 module Immutable
-  # Immutable::List represents an immutable list.
+  # <code>Immutable::List</code> represents an immutable list.
+  #
+  # <code>Immutable::List</code> is an abstract class and
+  # <code>Immutable::List.[]</code> should be used instead of
+  # <code>Immutable::List.new</code>. For example:
+  #
+  #   include Immutable
+  #   p List[]      #=> List[]
+  #   p List[1, 2]  #=> List[1, 2]
+  #
+  # <code>Immutable::Nil</code> represents an empty list, and
+  # <code>Immutable::Cons</code> represents a cons cell, which is a node in
+  # a list. For example:
+  #
+  #   p Nil                    #=> List[]
+  #   p Cons[1, Cons[2, Nil]]  #=> List[1, 2]
   class List
     class EmptyError < StandardError
       def initialize(msg = "list is empty")
