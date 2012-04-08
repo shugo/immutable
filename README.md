@@ -13,6 +13,11 @@ Install
 
 	$ gem install immutable
 
+Documentation
+========================
+
+* [API Reference](http://rubydoc.info/gems/immutable/0.1.0/frames)
+
 License
 ========================
 	(The MIT License)
