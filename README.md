@@ -16,7 +16,7 @@ Install
 Documentation
 ========================
 
-* [API Reference](http://rubydoc.info/gems/immutable/0.1.0/frames)
+* [API Reference](http://rubydoc.info/github/shugo/immutable/frames)
 
 License
 ========================
