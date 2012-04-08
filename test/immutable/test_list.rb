@@ -216,6 +216,16 @@ module Immutable
       assert_equal(List[1, 2, 0, 3, 4, 0, 5, 6], xs)
     end
 
+    def test_transpose
+      assert_equal(List[], List[].transpose)
+      assert_equal(List[], List[List[]].transpose)
+      assert_equal(List[List[1], List[2]], List[List[1, 2]].transpose)
+      assert_equal(List[List[1, 4], List[2, 5], List[3, 6]],
+                   List[List[1, 2, 3], List[4, 5, 6]].transpose)
+      assert_equal(List[List[1, 4], List[2, 5], List[3]],
+                   List[List[1, 2, 3], List[4, 5]].transpose)
+    end
+
     def test_sum
       assert_equal(0, List[].sum)
       assert_equal(1, List[1].sum)

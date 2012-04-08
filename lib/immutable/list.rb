@@ -120,6 +120,14 @@ module Immutable
       intersperse(xs).flatten
     end
 
+    # Transposes the rows and columns of +self+. For example:
+    # 
+    #   p List[List[1, 2, 3], List[4, 5, 6]].transpose
+    #   #=> List[List[1, 4], List[2, 5], List[3, 6]]
+    def transpose
+      raise ScriptError, "this method should be overriden"
+    end
+
     # Reduces +self+ using +block+ from right to left. +e+ is used as the
     # starting value. For example:
     #
@@ -368,6 +376,21 @@ module Immutable
 
     def prepend_to_all(sep)
       Cons[sep, Cons[@head, @tail.prepend_to_all(sep)]]
+    end
+
+    def Nil.transpose
+      Nil
+    end
+
+    def transpose
+      if @head == Nil
+        @tail.transpose
+      else
+        Cons[Cons[@head.head,
+          @tail.filter {|x| !x.empty?}.map(&:head)],
+          Cons[@head.tail,
+            @tail.filter {|x| !x.empty?}.map(&:tail)].transpose]
+      end
     end
 
     def Nil.take(n)
