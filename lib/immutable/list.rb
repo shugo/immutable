@@ -24,21 +24,27 @@ module Immutable
       end
     end
 
-    # Returns a new list populated with the given objects.
+    # Creates a new list populated with the given objects.
+    #
+    # @return [List] the created list.
     def self.[](*args)
       from_array(args)
     end
 
-    # Converts the given array +ary+ to a list. +ary+ should respond to
-    # <code>reverse_each</code>.
+    # Converts the given array to a list.
+    #
+    # @param [Array, #reverse_each] ary the array to convert.
+    # @return [List] the list converted from +ary+.
     def self.from_array(ary)
       ary.reverse_each.inject(Nil) { |x, y|
         Cons.new(y, x)
       }
     end
 
-    # Converts +enum+ to a list. +enum+ should respond to
-    # <code>inject</code>.
+    # Converts the given Enumerable object to a list.
+    #
+    # @param [#inject] enum the Enumerable object to convert.
+    # @return [List] the list converted from +enum+.
     def self.from_enum(enum)
       enum.inject(Nil) { |x, y|
         Cons.new(y, x)
@@ -46,52 +52,71 @@ module Immutable
     end
 
     # Appends two lists +self+ and +xs+.
+    #
+    # @param [List] xs the list to append.
+    # @return [List] the new list.
     def +(xs)
       foldr(xs) { |y, ys| Cons[y, ys] }
     end
 
     # Returns the first element of +self+. If +self+ is empty,
     # <code>Immutable::List::EmptyError</code> is raised.
+    #
+    # @return [Object] the first element of +self+.
     def head
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Returns the first element of +self+. If +self+ is empty,
     # <code>Immutable::List::EmptyError</code> is raised.
+    #
+    # @return [Object] the first element of +self+.
     def first
       head
     end
 
     # Returns the last element of +self+. If +self+ is empty,
     # <code>Immutable::List::EmptyError</code> is raised.
+    #
+    # @return [Object] the last element of +self+.
     def last
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
-    # Returns the element after the head of +self+. If +self+ is empty,
+    # Returns the elements after the head of +self+. If +self+ is empty,
     # <code>Immutable::List::EmptyError</code> is raised.
+    #
+    # @return [List] the elements after the head of +self+.
     def tail
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Returns all the element of +self+ except the last one.
     # If +self+ is empty, <code>Immutable::List::EmptyError</code> is
     # raised.
+    #
+    # @return [List] the elements of +self+ except the last one.
     def init
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
-    # Returns <code>true</code> if +self+ is empty.
+    # Returns whether +self+ is empty.
+    #
+    # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
     def empty?
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
-    # Returns <code>true</code> if +self+ is empty.
+    # Returns whether +self+ is empty.
+    #
+    # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
     def null?
       empty?
     end
 
     # Returns the number of elements in +self+. May be zero.
+    #
+    # @return [Integer] the number of elements in +self+.
     def length
       foldl(0) { |x, y| x + 1 }
     end
@@ -100,24 +125,34 @@ module Immutable
 
     # Returns the list obtained by applying the given block to each element
     # in +self+.
+    #
+    # @return [List] the obtained list.
     def map
       foldr(Nil) { |x, xs| Cons[yield(x), xs] }
     end
 
     # Returns the elements of +self+ in reverse order.
+    #
+    # @return [List] the reversed list.
     def reverse
       foldl(Nil) { |x, y| Cons[y, x] }
     end
 
-    # Inserts +xs+ in between the lists in +self+.
-    def intersperse(xs)
-      raise ScriptError, "this method should be overriden"
+    # Inserts +sep+ in between the elements of +self+.
+    #
+    # @param [Object] sep the object to insert between elements.
+    # @return [List] the created list.
+    def intersperse(sep)
+      # this method should be overriden
     end
 
     # Inserts +xs+ in between the lists in +self+ and concatenates the
     # result.
     # <code>xss.intercalate(xs)</code> is equivalent to
     # <code>xss.intersperse(xs).flatten</code>.
+    #
+    # @param [List] xs the list to insert between lists.
+    # @return [List] the created list.
     def intercalate(xs)
       intersperse(xs).flatten
     end
@@ -126,11 +161,15 @@ module Immutable
     # 
     #   p List[List[1, 2, 3], List[4, 5, 6]].transpose
     #   #=> List[List[1, 4], List[2, 5], List[3, 6]]
+    #
+    # @return [List] the transposed list.
     def transpose
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Returns the list of all subsequences of +self+.
+    #
+    # @return [List<List>] the list of subsequences.
     def subsequences
       Cons[List[], nonempty_subsequences]
     end
@@ -139,31 +178,43 @@ module Immutable
     # starting value. For example:
     #
     #   List[1, 2, 3].foldr(9) { |x, y| x + y } #=> 1 - (2 - (3 - 9)) = -7
+    #
+    # @param [Object] e the start value.
+    # @return [Object] the reduced value.
     def foldr(e, &block)
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Reduces +self+ using +block+ from right to left. If +self+ is empty,
     # <code>Immutable::List::EmptyError</code> is raised.
+    #
+    # @return [Object] the reduced value.
     def foldr1(&block)
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Reduces +self+ using +block+ from left to right. +e+ is used as the
     # starting value. For example:
     #
     #   List[1, 2, 3].foldl(9) { |x, y| x + y } #=> ((9 - 1) - 2) - 3 = 3
+    #
+    # @param [Object] e the start value.
+    # @return [Object] the reduced value.
     def foldl(e, &block)
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Reduces +self+ using +block+ from left to right. If +self+ is empty,
     # <code>Immutable::List::EmptyError</code> is raised.
+    #
+    # @return [Object] the reduced value.
     def foldl1(&block)
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Concatenates a list of lists.
+    #
+    # @return [List] the concatenated list.
     def flatten
       foldr(Nil) { |x, xs| x + xs }
     end
@@ -173,6 +224,8 @@ module Immutable
 
     # Returns the list obtained by concatenating the results of the given
     # block for each element in +self+.
+    #
+    # @return [List] the obtained list.
     def flat_map
       foldr(Nil) { |x, xs| yield(x) + xs }
     end
@@ -184,11 +237,15 @@ module Immutable
     alias bind flat_map
 
     # Computes the sum of the numbers in +self+.
+    #
+    # @return [#+] the sum of the numbers.
     def sum
       foldl(0, &:+)
     end
 
     # Computes the product of the numbers in +self+.
+    #
+    # @return [#*] the product of the numbers.
     def product
       foldl(1, &:*)
     end
@@ -203,6 +260,9 @@ module Immutable
     #   p xs #=> List[3, 2, 1]
     #
     # <code>unfoldr</code> is the dual of <code>foldr</code>.
+    #
+    # @param [Object] e the seed value.
+    # @return [List] the list built from the seed value and the block.
     def self.unfoldr(e, &block)
       x = yield(e)
       if x.nil?
@@ -215,38 +275,52 @@ module Immutable
 
     # Returns the first +n+ elements of +self+, or +self+ itself if
     # <code>n > self.length</code>.
+    #
+    # @param [Integer] n the number of elements to take.
+    # @return [List] the first +n+ elements of +self+.
     def take(n)
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
 
     # Returns the suffix of +self+ after the first +n+ elements, or
     # <code>List[]</code> if <code>n > self.length</code>.
+    #
+    # @param [Integer] n the number of elements to drop.
+    # @return [List] the suffix of +self+ after the first +n+ elements.
     def drop(n)
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Returns the longest prefix of the elements of +self+ for which +block+
     # evaluates to true.
+    #
+    # @return [List] the prefix of the elements of +self+.
     def take_while(&block)
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Returns the suffix remaining after
     # <code>self.take_while(&block)</code>.
+    #
+    # @return [List] the suffix of the elements of +self+.
     def drop_while(&block)
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Returns the first element in +self+ for which the given block
     # evaluates to true.  If such an element is not found, it
     # returns <code>nil</code>.
+    #
+    # @return [Object] the found element.
     def find(&block)
-      raise ScriptError, "this method should be overriden"
+      # this method should be overriden
     end
 
     # Returns the elements in +self+ for which the given block evaluates to
     # true.
+    #
+    # @return [List] the elements that satisfies the condition.
     def filter
       foldr(Nil) { |x, xs|
         if yield(x)
@@ -262,6 +336,8 @@ module Immutable
 
   class Cons < List
     # Creates a list obtained by prepending +head+ to the list +tail+.
+    #
+    # @return [Cons] the created list.
     def self.[](head, tail = Nil)
       self.new(head, tail)
     end
