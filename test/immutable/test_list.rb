@@ -226,6 +226,13 @@ module Immutable
                    List[List[1, 2, 3], List[4, 5]].transpose)
     end
 
+    def test_subsequences
+      assert_equal(List[List[]], List[].subsequences)
+      assert_equal(List[List[], List[1], List[2], List[1, 2],
+                        List[3], List[1, 3], List[2, 3], List[1, 2, 3]],
+                   List[1, 2, 3].subsequences)
+    end
+
     def test_sum
       assert_equal(0, List[].sum)
       assert_equal(1, List[1].sum)
