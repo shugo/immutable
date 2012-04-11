@@ -1,5 +1,6 @@
 module Immutable
   class Promise
+    # :nodoc:
     Box = Struct.new(:type, :value)
 
     def initialize(type, value)
