@@ -17,7 +17,7 @@ module Immutable
     end
 
     def self.iota(n, delta)
-      cons{n}.tail { iota(n + delta, delta) }
+      cons { n }.tail { iota(n + delta, delta) }
     end
 
     def null?
