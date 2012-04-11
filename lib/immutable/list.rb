@@ -1,5 +1,3 @@
-# -*- tailcall-optimization: true; trace-instruction: false -*-
-
 module Immutable
   # <code>Immutable::List</code> represents an immutable list.
   #

@@ -1,6 +1,3 @@
-# -*- tailcall-optimization: true; trace-instruction: false -*-
-# ported from http://www.cs.kent.ac.uk/people/staff/smk/redblack/Untyped.hs
-
 module Immutable
   # <code>Immutable::Map</code> represents an immutable map from keys to
   # values.
