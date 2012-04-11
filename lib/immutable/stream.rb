@@ -33,6 +33,46 @@ module Immutable
       force.tail
     end
 
+    def foldl(e, &block)
+      if null?
+        e
+      else
+        tail.foldl(yield(e, head), &block)
+      end
+    end
+
+    def foldr(e, &block)
+      if null?
+        e
+      else
+        yield(head, tail.foldr(e, &block))
+      end
+    end
+
+    def map(&block)
+      Stream.lazy {
+        if null?
+          Stream.null
+        else
+          Stream.cons { yield(head) }.tail { tail.map(&block) }
+        end
+      }
+    end
+
+    def filter(&block)
+      Stream.lazy {
+        if null?
+          Stream.null
+        else
+          if yield(head)
+            Stream.cons { head }.tail { tail.filter(&block) }
+          else
+            tail.filter(&block)
+          end
+        end
+      }
+    end
+
     def take(n)
       Stream.lazy {
         if null? || n <= 0
@@ -43,12 +83,38 @@ module Immutable
       }
     end
 
+    def drop(n)
+      Stream.lazy {
+        if null? || n <= 0
+          self
+        else
+          tail.drop(n - 1)
+        end
+      }
+    end
+
+    def take_while(&block)
+      Stream.lazy {
+        if null? || !yield(head)
+          Stream.null
+        else
+          Stream.cons { head }.tail { tail.take_while(&block) }
+        end
+      }
+    end
+
+    def drop_while(&block)
+      Stream.lazy {
+        if null? || !yield(head)
+          self
+        else
+          tail.drop_while(&block)
+        end
+      }
+    end
+
     def to_list
-      if null?
-        List[]
-      else
-        Cons[head, tail.to_list]
-      end
+      foldr(List[]) { |x, xs| Cons[x, xs] }
     end
 
     def self.unfoldr(e, &block)
