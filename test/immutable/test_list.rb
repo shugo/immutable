@@ -96,6 +96,7 @@ module Immutable
       assert(List[1] != List[])
       assert(List[1] == List[1])
       assert(List[1] != List[2])
+      assert(List[1] != [1])
       assert(List["foo"] == List["foo"])
       assert(List["foo"] != List["bar"])
       assert(List[1, 2, 3] == List[1, 2, 3])

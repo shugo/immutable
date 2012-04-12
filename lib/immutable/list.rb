@@ -427,7 +427,7 @@ module Immutable
     end
 
     def ==(xs)
-      if xs.empty?
+      if !xs.is_a?(List) || xs.empty?
         false
       else
         @head == xs.head && @tail == xs.tail

@@ -17,6 +17,14 @@ module Immutable
       new(:eager, value)
     end
 
+    def lazy?
+      box.type == :lazy
+    end
+
+    def eager?
+      box.type == :eager
+    end
+
     def self.delay
       lazy {
         eager(yield)
