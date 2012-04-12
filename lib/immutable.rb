@@ -5,3 +5,4 @@ end
 require "immutable/list"
 require "immutable/map"
 require "immutable/promise"
+require "immutable/stream"
