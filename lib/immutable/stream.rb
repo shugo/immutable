@@ -11,13 +11,9 @@ module Immutable
       delay { StreamNull }
     end
 
-    def self.cons(head = nil, tail = nil, &block)
-      if head
-        Stream.eager(StreamCons.new(Stream.delay(&head),
-                                    Stream.lazy(&tail)))
-      else
-        StreamHead.new(block)
-      end
+    def self.cons(head, tail)
+      Stream.eager(StreamCons.new(Stream.delay(&head),
+                                  Stream.lazy(&tail)))
     end
 
     def self.[](*args)
@@ -32,15 +28,15 @@ module Immutable
       lazy {
         begin
           x = e.next
-          Stream.cons { x }.tail { from_enumerator(e) }
+          cons ->{ x }, ->{ from_enumerator(e) }
         rescue StopIteration
-          Stream.null
+          null
         end
       }
     end
 
     def self.from(first, step = 1)
-      cons { first }.tail { from(first + step, step) }
+      cons ->{ first }, ->{ from(first + step, step) }
     end
 
     def null?
@@ -168,7 +164,7 @@ module Immutable
         if null?
           Stream.null
         else
-          Stream.cons { yield(head) }.tail { tail.map(&block) }
+          Stream.cons ->{ yield(head) }, ->{ tail.map(&block) }
         end
       }
     end
@@ -179,7 +175,7 @@ module Immutable
           Stream.null
         else
           if yield(head)
-            Stream.cons { head }.tail { tail.filter(&block) }
+            Stream.cons ->{ head }, ->{ tail.filter(&block) }
           else
             tail.filter(&block)
           end
@@ -202,7 +198,7 @@ module Immutable
         if n <= 0 || null?
           Stream.null
         else
-          Stream.cons { head }.tail { tail.take(n - 1) }
+          Stream.cons ->{ head }, ->{ tail.take(n - 1) }
         end
       }
     end
@@ -222,7 +218,7 @@ module Immutable
         if null? || !yield(head)
           Stream.null
         else
-          Stream.cons { head }.tail { tail.take_while(&block) }
+          Stream.cons ->{ head }, ->{ tail.take_while(&block) }
         end
       }
     end
@@ -252,7 +248,7 @@ module Immutable
           Stream.null
         else
           y, z = x
-          Stream.cons { y }.tail { unfoldr(z, &block) }
+          Stream.cons ->{ y }, ->{ unfoldr(z, &block) }
         end
       }
     end
@@ -262,7 +258,7 @@ module Immutable
         heads = xss.map { |xs| xs.null? ? nil : xs.head }
         tails = xss.map { |xs| xs.null? ? Stream.null : xs.tail }
         h = yield(head, *heads)
-        Stream.cons { h }.tail { tail.zip_with(*tails, &block) }
+        Stream.cons ->{ h }, ->{ tail.zip_with(*tails, &block) }
       }
     end
   end
