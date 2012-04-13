@@ -66,6 +66,15 @@ module Immutable
       foldr(xs) { |y, ys| Cons[y, ys] }
     end
 
+    # Returns whether +self+ equals to +xs+.
+    #
+    # @param [List] xs the list to compare.
+    # @return [true, false] +true+ if +self+ equals to +xs+; otherwise,
+    # +false+.
+    def ==(xs)
+      # this method should be overriden
+    end
+
     # Returns the first element of +self+. If +self+ is empty,
     # <code>Immutable::List::EmptyError</code> is raised.
     #
@@ -257,6 +266,13 @@ module Immutable
       end
     end
 
+    # Returns the +n+th element of +self+. If +n+ is out of range, +nil+ is
+    # returned.
+    #
+    # @return [Object] the +n+th element.
+    def [](n)
+    end
+
     # Returns the first +n+ elements of +self+, or +self+ itself if
     # <code>n > self.length</code>.
     #
@@ -265,7 +281,6 @@ module Immutable
     def take(n)
       # this method should be overriden
     end
-
 
     # Returns the suffix of +self+ after the first +n+ elements, or
     # <code>List[]</code> if <code>n > self.length</code>.
@@ -290,6 +305,13 @@ module Immutable
     # @return [List] the suffix of the elements of +self+.
     def drop_while(&block)
       # this method should be overriden
+    end
+
+    # Returns +self+.
+    #
+    # @return [List] +self+.
+    def to_list
+      self
     end
 
     # Returns the first element in +self+ for which the given block
@@ -422,6 +444,10 @@ module Immutable
       @tail.foldl(@head, &block)
     end
 
+    def Nil.==(xs)
+      equal?(xs)
+    end
+
     def ==(xs)
       if !xs.is_a?(List) || xs.empty?
         false
@@ -478,6 +504,20 @@ module Immutable
         Cons[xs, Cons[Cons[@head, xs], xss]]
       }
       Cons[List[@head], yss]
+    end
+
+    def Nil.[](n)
+      nil
+    end
+
+    def [](n)
+      if n < 0
+        nil
+      elsif n == 0
+        head
+      else
+        tail[n - 1]
+      end
     end
 
     def Nil.take(n)

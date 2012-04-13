@@ -8,7 +8,7 @@ module Immutable
   #   p x               #=> 3
   #   y = promise.force #=> (no output; the value is memoized)
   #   p y               #=> 3
-  # @example Infinite stream
+  # @example Infinite streams
   #   def from(n)
   #     Promise.delay {
   #       Cons[n, from(n + 1)]
@@ -39,9 +39,8 @@ module Immutable
 
     # Takes a block which evaluates to a promise, and returns a promise
     # which at some point in the future may be asked (by +Promise#force+)
-    # to evaluate the block and deliver the resulting promise.
+    # to evaluate the block and deliver the value of the resulting promise.
     #
-    # @yieldreturn [Promise] the promise to be returned by +Promise#force+.
     # @return [Promise] the created promise.
     def self.lazy(&block)
       new(:lazy, block)
@@ -80,7 +79,6 @@ module Immutable
     # <code>Promise.delay { expression }</code> is equivalent to
     # <code>Promise.lazy { Promise.eager(expression) }</code>.
     #
-    # @yieldreturn [Object] the value to be returned by +Promise#force+.
     # @return [Promise] the created promise.
     def self.delay
       lazy {
@@ -88,7 +86,7 @@ module Immutable
       }
     end
 
-    # Returns the value of +self+ as follows:
+    # Returns the value of +self+.
     # If a value of +self+ has already been computated, the value is
     # returned. Otherwise, the promise is first evaluated, and the resulting
     # value is returned.
