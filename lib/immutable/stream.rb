@@ -3,17 +3,62 @@ require "immutable/list"
 require "immutable/promise"
 
 module Immutable
+  # +Immutable::Stream+ represents a stream, also known as a lazy list.
+  # A stream is similar to a list. However the evaluation of a stream
+  # element is delayed until its value is needed
+  #
+  # @example An infinite stream which represents natural numbers.
+  #   def from(n)
+  #     Stream.cons ->{n}, ->{from(n + 1)}
+  #   end
+  #
+  #   nats = from(0)
+  #   p from(0).drop(100).take(5).to_list #=> List[100, 101, 102, 103, 104]
   class Stream < Promise
     include Enumerable
     include Foldable
 
-    def self.null
-      delay { StreamNull }
+    # :nodoc:
+    NULL = Object.new
+
+    def NULL.head
+      raise List::EmptyError
     end
 
+    def NULL.tail
+      raise List::EmptyError
+    end
+
+    def NULL.inspect
+      "NULL"
+    end
+
+    # :nodoc:
+    class Pair
+      attr_reader :head, :tail
+
+      def initialize(head, tail)
+        @head = head
+        @tail = tail
+      end
+    end
+
+    # Returns an empty stream.
+    #
+    # @return [Stream] an empty stream.
+    def self.null
+      delay { NULL }
+    end
+
+    # Creates a new stream.
+    #
+    # @example A Stream which has 123 as the only element.
+    #   s = Stream.cons(->{123}, ->{Stream.null})
+    #
+    # @param [Proc] head a +Proc+ whose value is the head of +self+.
+    # @param [Proc] tail a +Proc+ whose value is the tail of +self+.
     def self.cons(head, tail)
-      Stream.eager(StreamCons.new(Stream.delay(&head),
-                                  Stream.lazy(&tail)))
+      Stream.eager(Pair.new(Stream.delay(&head), Stream.lazy(&tail)))
     end
 
     def self.[](*args)
@@ -40,7 +85,7 @@ module Immutable
     end
 
     def null?
-      force == StreamNull
+      force == NULL
     end
     alias empty? null?
 
@@ -260,29 +305,6 @@ module Immutable
         h = yield(head, *heads)
         Stream.cons ->{ h }, ->{ tail.zip_with(*tails, &block) }
       }
-    end
-  end
-
-  StreamNull = Object.new
-
-  def StreamNull.head
-    raise List::EmptyError
-  end
-
-  def StreamNull.tail
-    raise List::EmptyError
-  end
-
-  def StreamNull.inspect
-    "StreamNull"
-  end
-
-  class StreamCons
-    attr_reader :head, :tail
-
-    def initialize(head, tail)
-      @head = head
-      @tail = tail
     end
   end
 end

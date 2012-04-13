@@ -29,10 +29,10 @@ module Immutable
   #   p stream_ref(nats, 3) #=> 3
   class Promise
     # :nodoc:
-    Box = Struct.new(:type, :value)
+    Content = Struct.new(:type, :value)
 
     def initialize(type, value)
-      @box = Box.new(type, value)
+      @content = Content.new(type, value)
     end
 
     private_class_method :new
@@ -63,14 +63,14 @@ module Immutable
     #
     # @return [true, false] +true+ if +self+ is lazy; otherwise, +false+.
     def lazy?
-      box.type == :lazy
+      content.type == :lazy
     end
 
     # Returns whether +self+ is eager.
     #
     # @return [true, false] +true+ if +self+ is eager; otherwise, +false+.
     def eager?
-      box.type == :eager
+      content.type == :eager
     end
 
     # Takes a block, and returns a promise which at some point in the future
@@ -95,17 +95,15 @@ module Immutable
     #
     # @return [Object] the value of +self+.
     def force
-      content = box
       case content.type
       when :eager
         content.value
       when :lazy
         promise = content.value.call
-        content = box
         if content.type != :eager
-          content.type = promise.box.type
-          content.value = promise.box.value
-          promise.box = content
+          content.type = promise.content.type
+          content.value = promise.content.value
+          promise.content = content
         end
         force
       else
@@ -115,6 +113,6 @@ module Immutable
 
     protected
 
-    attr_accessor :box
+    attr_accessor :content
   end
 end
