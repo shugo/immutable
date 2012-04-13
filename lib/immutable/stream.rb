@@ -277,17 +277,6 @@ module Immutable
     "StreamNull"
   end
 
-  class StreamHead
-    def initialize(head)
-      @head = head
-    end
-
-    def tail(&block)
-      Stream.eager(StreamCons.new(Stream.delay(&@head),
-                                  Stream.lazy(&block)))
-    end
-  end
-
   class StreamCons
     attr_reader :head, :tail
 
