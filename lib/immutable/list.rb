@@ -316,8 +316,10 @@ module Immutable
     end
   end
 
+  # +Immutable::Nil+ represents an empty list.
   Nil = List.new
 
+  # +Immutable::Cons+ represents a cons cell.
   class Cons < List
     # Creates a list obtained by prepending +head+ to the list +tail+.
     #
