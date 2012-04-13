@@ -1,16 +1,20 @@
+require "immutable/foldable"
 require "immutable/list"
 require "immutable/promise"
 
 module Immutable
   class Stream < Promise
+    include Enumerable
+    include Foldable
+
     def self.null
       delay { StreamNull }
     end
 
     def self.cons(head = nil, tail = nil, &block)
       if head
-        Stream.eager(StreamCons.new(Stream.delay(head),
-                                    Stream.lazy(tail)))
+        Stream.eager(StreamCons.new(Stream.delay(&head),
+                                    Stream.lazy(&tail)))
       else
         StreamHead.new(block)
       end
@@ -86,6 +90,13 @@ module Immutable
     end
     protected :inspect_i
 
+    def each(&block)
+      unless null?
+        yield(head)
+        tail.each(&block)
+      end
+    end
+
     def foldr(e, &block)
       if null?
         e
@@ -125,9 +136,31 @@ module Immutable
         end
       end
     end
-    
-    def length
-      foldl(0) { |x, y| x + 1 }
+
+    def +(s)
+      Stream.lazy {
+        if null?
+          s
+        else
+          Stream.cons ->{head}, ->{tail + s}
+        end
+      }
+    end
+
+    def flatten
+      Stream.lazy {
+        if null?
+          self
+        else
+          if head.null?
+            tail.flatten
+          else
+            Stream.cons ->{head.head}, ->{
+              Stream.cons(->{head.tail}, ->{tail}).flatten
+            }
+          end
+        end
+      }
     end
 
     def map(&block)

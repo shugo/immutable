@@ -1,3 +1,5 @@
+require "immutable/foldable"
+
 module Immutable
   # <code>Immutable::List</code> represents an immutable list.
   #
@@ -16,6 +18,9 @@ module Immutable
   #   p Nil                    #=> List[]
   #   p Cons[1, Cons[2, Nil]]  #=> List[1, 2]
   class List
+    include Enumerable
+    include Foldable
+
     class EmptyError < StandardError
       def initialize(msg = "list is empty")
         super(msg)
@@ -47,6 +52,10 @@ module Immutable
       enum.inject(Nil) { |x, y|
         Cons.new(y, x)
       }.reverse
+    end
+
+    # Calls +block+ once for each element in +self+.
+    def each(&block)
     end
 
     # Appends two lists +self+ and +xs+.
@@ -111,15 +120,6 @@ module Immutable
     def null?
       empty?
     end
-
-    # Returns the number of elements in +self+. May be zero.
-    #
-    # @return [Integer] the number of elements in +self+.
-    def length
-      foldl(0) { |x, y| x + 1 }
-    end
-
-    alias size length
 
     # Returns the list obtained by applying the given block to each element
     # in +self+.
@@ -233,20 +233,6 @@ module Immutable
 
     # An alias of <code>flat_map</code>.
     alias bind flat_map
-
-    # Computes the sum of the numbers in +self+.
-    #
-    # @return [#+] the sum of the numbers.
-    def sum
-      foldl(0, &:+)
-    end
-
-    # Computes the product of the numbers in +self+.
-    #
-    # @return [#*] the product of the numbers.
-    def product
-      foldl(1, &:*)
-    end
 
     # Builds a list from the seed value +e+ and the given block. The block
     # takes a seed value and returns <code>nil</code> if the seed should
@@ -408,6 +394,14 @@ module Immutable
       else
         yield(@head, @tail.foldr1(&block))
       end
+    end
+
+    def Nil.each
+    end
+
+    def each(&block)
+      yield(@head)
+      @tail.each(&block)
     end
 
     def Nil.foldl(e)

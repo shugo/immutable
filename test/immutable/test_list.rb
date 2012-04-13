@@ -1,5 +1,8 @@
-require "test/unit"
-require "immutable/list"
+require_relative "../test_helper"
+
+with_tailcall_optimization {
+  require "immutable/list"
+}
 
 module Immutable
   class TestList < Test::Unit::TestCase
@@ -50,6 +53,16 @@ module Immutable
       assert(List[].empty?)
       assert(!List[1].empty?)
       assert(!List[1, 2, 3].empty?)
+    end
+
+    def test_each
+      a = []
+      List[].each { |x| a << x }
+      assert_equal([], a)
+
+      a = []
+      List[1, 2, 3].each { |x| a << x }
+      assert_equal([1, 2, 3], a)
     end
 
     def test_foldr

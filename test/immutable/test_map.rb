@@ -1,5 +1,8 @@
-require "test/unit"
-require "immutable/map"
+require_relative "../test_helper"
+
+with_tailcall_optimization {
+  require "immutable/map"
+}
 
 module Immutable
   class TestMap < Test::Unit::TestCase
@@ -46,6 +49,16 @@ module Immutable
           assert_equal(nil, map2[k])
         end
       end
+    end
+
+    def test_each
+      a = []
+      Map[].each { |x| a << x }
+      assert_equal([], a)
+
+      a = []
+      Map[a: 1, c: 3, b: 2].each { |x| a << x }
+      assert_equal([[:a, 1], [:b, 2], [:c, 3]], a)
     end
 
     def test_foldr

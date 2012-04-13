@@ -1,5 +1,8 @@
-require "test/unit"
-require "immutable/stream"
+require_relative "../test_helper"
+
+with_tailcall_optimization {
+  require "immutable/stream"
+}
 
 module Immutable
   class TestStream < Test::Unit::TestCase
@@ -66,6 +69,16 @@ module Immutable
       assert(Stream[].empty?)
       assert(!Stream[1].empty?)
       assert(!Stream[1, 2, 3].empty?)
+    end
+
+    def test_each
+      a = []
+      Stream[].each { |x| a << x }
+      assert_equal([], a)
+
+      a = []
+      Stream[1, 2, 3].each { |x| a << x }
+      assert_equal([1, 2, 3], a)
     end
 
     def test_foldr
@@ -169,6 +182,24 @@ module Immutable
       assert_equal(1, Stream[1].length)
       assert_equal(3, Stream[1, 2, 3].length)
       assert_equal(100, Stream.from(1).take(100).length)
+    end
+
+    def test_plus
+      assert_equal(Stream[], Stream[] + Stream[])
+      assert_equal(Stream[1, 2, 3], Stream[] + Stream[1, 2, 3])
+      assert_equal(Stream[1, 2, 3], Stream[1, 2, 3] + Stream[])
+      assert_equal(Stream[1, 2, 3], Stream[1] + Stream[2, 3])
+      assert_equal(Stream[1, 2, 3], Stream[1, 2] + Stream[3])
+    end
+
+    def test_flatten
+      assert_equal(Stream[], Stream[].flatten)
+      assert_equal(Stream[1], Stream[Stream[1]].flatten)
+      assert_equal(Stream[Stream[1]],
+                   Stream[Stream[Stream[1]]].flatten)
+      assert_equal(Stream[1, 2, 3], Stream[Stream[1, 2], Stream[3]].flatten)
+      assert_equal(Stream[1, 2, 3],
+                   Stream[Stream[1], Stream[2], Stream[3]].flatten)
     end
 
     def test_map

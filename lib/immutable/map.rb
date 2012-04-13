@@ -1,3 +1,5 @@
+require "immutable/foldable"
+
 module Immutable
   # <code>Immutable::Map</code> represents an immutable map from keys to
   # values.
@@ -20,6 +22,9 @@ module Immutable
   #   p m2  #=> Map[:a => 1, :b => 2]
   #   p m   #=> Map[:a => 1]
   class Map
+    include Enumerable
+    include Foldable
+
     class InvarianceViolationError < StandardError
     end
 
@@ -72,6 +77,11 @@ module Immutable
       } + "]"
     end
 
+    # Calls +block+ once for each key/value in +self+.
+    def each(&block)
+      foldl_with_key(nil) { |x, k, v| yield([k, v]) }
+    end
+
     # Folds the values in +self+ from right to left.
     def foldr(e)
       foldr_with_key(e) { |k, v, x| yield(v, x) }
@@ -119,9 +129,6 @@ module Immutable
       Leaf
     end
 
-    def Leaf.each
-    end
-
     class Fork < Map  #:nodoc:
       attr_reader :left, :key, :value, :right
 
@@ -160,12 +167,6 @@ module Immutable
         else
           app(left, right)
         end
-      end
-
-      def each(&block)
-        left.each(&block)
-        yield key, value
-        right.each(&block)
       end
 
       def Leaf.foldr_with_key(e)

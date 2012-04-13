@@ -1,17 +1,4 @@
-require "test/unit"
-
-def with_tailcall_optimization
-  old_compile_option = RubyVM::InstructionSequence.compile_option
-  RubyVM::InstructionSequence.compile_option = {
-    :tailcall_optimization => true,
-    :trace_instruction => false
-  }
-  begin
-    yield
-  ensure
-    RubyVM::InstructionSequence.compile_option = old_compile_option
-  end
-end
+require_relative "../test_helper"
 
 with_tailcall_optimization {
   require "immutable/promise"
@@ -20,6 +7,8 @@ with_tailcall_optimization {
 
 module Immutable
   class TestPromise < Test::Unit::TestCase
+    COUNT = 10000
+
     def test_eager
       assert_equal(123, Promise.eager(123).force)
     end
@@ -137,11 +126,11 @@ module Immutable
     end
 
     def test_leak1
-      assert_equal(0, nloop(10000).force)
+      assert_equal(0, nloop(COUNT).force)
     end
 
     def test_leak2
-      s = nloop(10000)
+      s = nloop(COUNT)
       assert_equal(0, s.force)
     end
 
@@ -162,12 +151,52 @@ module Immutable
     end
 
     def test_leak3
-      assert_equal(10000, traverse(from(0), 10000).force.head)
+      assert_equal(COUNT, traverse(from(0), COUNT).force.head)
     end
 
     def test_leak4
-      s = traverse(from(0), 10000)
-      assert_equal(10000, s.force.head)
+      s = traverse(from(0), COUNT)
+      assert_equal(COUNT, s.force.head)
+    end
+
+    def stream_filter(s, &block)
+      Promise.lazy {
+        xs = s.force
+        if xs.empty?
+          Promise.delay { List[] }
+        else
+          if yield(xs.head)
+            Promise.delay { Cons[xs.head, stream_filter(xs.tail, &block)] }
+          else
+            stream_filter(xs.tail, &block)
+          end
+        end
+      }
+    end
+
+    def test_leak5
+      stream_filter(from(0)) { |n| n == COUNT }.force
+    end
+
+    def stream_ref(s, index)
+      Promise.lazy {
+        xs = s.force
+        if xs.empty?
+          :error
+        else
+          if index.zero?
+            Promise.delay { xs.head }
+          else
+            stream_ref(xs.tail, index - 1)
+          end
+        end
+      }
+    end
+
+    def test_leak6
+      assert_equal(0, stream_ref(stream_filter(from(0), &:zero?), 0).force)
+      s = stream_ref(from(0), COUNT)
+      assert_equal(COUNT, s.force)
     end
   end
 end
