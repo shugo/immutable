@@ -76,8 +76,10 @@ module Immutable
     #
     # @example A Stream which has 123 as the only element.
     #   s = Stream.null.snoc {123}
+    #   p s.to_list #=> List[123]
     # @example A Stream which has two elements: "abc" and "def".
     #   s = Stream.null.snoc {"def"}.snoc {"abc"}
+    #   p s.to_list #=> List["abc", "def"]
     #
     # @return [Stream] the new stream.
     def snoc(&block)
