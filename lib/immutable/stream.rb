@@ -70,12 +70,14 @@ module Immutable
       Stream.eager(Pair.new(Stream.delay(&head), Stream.lazy(&tail)))
     end
 
-    # Prepends a new element.
+    # Creates a new stream whose head is the value of +block+ and whose tail
+    # is +self+. The name +snoc+ is +cons+ spelled backwards and means "cons
+    # on the right".
     #
     # @example A Stream which has 123 as the only element.
     #   s = Stream.null.snoc {123}
     # @example A Stream which has two elements: "abc" and "def".
-    #   s = Stream.null.snoc {"def"}.snoc{"abc"}
+    #   s = Stream.null.snoc {"def"}.snoc {"abc"}
     #
     # @return [Stream] the new stream.
     def snoc(&block)
