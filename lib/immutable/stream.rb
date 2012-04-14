@@ -65,15 +65,27 @@ module Immutable
     #
     # @param [Proc] head a +Proc+ whose value is the head of +self+.
     # @param [Proc] tail a +Proc+ whose value is the tail of +self+.
-    # @return [Stream] the created stream.
+    # @return [Stream] the new stream.
     def self.cons(head, tail)
       Stream.eager(Pair.new(Stream.delay(&head), Stream.lazy(&tail)))
+    end
+
+    # Prepends a new element.
+    #
+    # @example A Stream which has 123 as the only element.
+    #   s = Stream.null.snoc {123}
+    # @example A Stream which has two elements: "abc" and "def".
+    #   s = Stream.null.snoc {"def"}.snoc{"abc"}
+    #
+    # @return [Stream] the new stream.
+    def snoc(&block)
+      Stream.eager(Pair.new(Stream.delay(&block), self))
     end
 
     # Creates a new stream. Note that the arguments are evaluated eagerly.
     #
     # @param [Object] args the elements of the stream.
-    # @return [Stream] the created stream.
+    # @return [Stream] the new stream.
     def self.[](*args)
       from_enum(args)
     end
@@ -81,7 +93,7 @@ module Immutable
     # Creates a new stream from an +Enumerable+ object.
     #
     # @param [Enumerable] e an +Enumerable+ object.
-    # @return [Stream] the created stream.
+    # @return [Stream] the new stream.
     def self.from_enum(e)
       from_enumerator(e.each)
     end
@@ -91,7 +103,7 @@ module Immutable
     # +Enumerator#next+.
     #
     # @param [Enumerator] e an +Enumerator+ object.
-    # @return [Stream] the created stream.
+    # @return [Stream] the new stream.
     def self.from_enumerator(e)
       lazy {
         begin
@@ -108,7 +120,7 @@ module Immutable
     #
     # @param [#+] first the first element.
     # @param [#+] step the step for succeeding elements.
-    # @return [Stream] the created stream.
+    # @return [Stream] the new stream.
     def self.from(first, step = 1)
       cons ->{ first }, ->{ from(first + step, step) }
     end

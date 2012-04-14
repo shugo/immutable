@@ -28,6 +28,14 @@ module Immutable
 
     def test_s_from
       s = Stream.from(1)
+      assert_equal(Stream[1], s.take(1))
+      assert_equal(Stream[1, 2, 3], s.take(3))
+      assert_equal(Stream[1, 3, 5], Stream.from(1, 2).take(3))
+    end
+
+    def test_snoc
+      assert_equal(Stream[1], Stream.null.snoc { 1 })
+      assert_equal(Stream[1, 2], Stream.null.snoc { 2 }.snoc { 1 })
     end
 
     def test_head
@@ -221,6 +229,9 @@ module Immutable
       assert_equal(Stream[1, 2], Stream[1, 2, 3].take(2))
       assert_equal(Stream[1, 2, 3], Stream[1, 2, 3].take(3))
       assert_equal(Stream[1, 2, 3], Stream[1, 2, 3].take(4))
+      assert_equal(Stream[], Stream.from(1).take(0))
+      assert_equal(Stream[1, 2, 3], Stream.from(1).take(3))
+      assert_equal(Stream[0, 2, 4], Stream.from(0, 2).take(3))
     end
 
     def test_take_while
@@ -240,6 +251,7 @@ module Immutable
       assert_equal(Stream[3], Stream[1, 2, 3].drop(2))
       assert_equal(Stream[], Stream[1, 2, 3].drop(3))
       assert_equal(Stream[], Stream[1, 2, 3].drop(4))
+      assert_equal(Stream[6, 7, 8], Stream.from(1).drop(5).take(3))
     end
 
     def test_drop_while
@@ -263,6 +275,9 @@ module Immutable
         end
       }
       assert_equal(Stream["foo", "bar", "baz"], xs)
+      nats = Stream.unfoldr(0) { |x| [x, x + 1] }
+      assert_equal(Stream[0, 1, 2], nats.take(3))
+      assert_equal(Stream[0, 1, 2, 3, 4], nats.take(5))
     end
   end
 end
