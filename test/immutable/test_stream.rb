@@ -279,5 +279,26 @@ module Immutable
       assert_equal(Stream[0, 1, 2], nats.take(3))
       assert_equal(Stream[0, 1, 2, 3, 4], nats.take(5))
     end
+
+    def test_zip
+      s1 = Stream.from(0)
+      s2 = Stream.from(0, 2)
+      s3 = Stream.from(0, 3)
+      s = s1.zip_with(s2, s3) { |x, y, z|
+        x + y + z
+      }
+      assert_equal(Stream[[0, 0, 0], [1, 2, 3], [2, 4, 6]],
+                   s1.zip(s2, s3).take(3))
+    end
+
+    def test_zip_with
+      s1 = Stream.from(0)
+      s2 = Stream.from(0, 2)
+      s3 = Stream.from(0, 3)
+      s = s1.zip_with(s2, s3) { |x, y, z|
+        x + y + z
+      }
+      assert_equal(Stream[0, 6, 12, 18], s.take(4))
+    end
   end
 end
