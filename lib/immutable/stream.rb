@@ -59,9 +59,11 @@ module Immutable
     #
     # @example A Stream which has 123 as the only element.
     #   s = Stream.cons(->{123}, ->{Stream.null})
+    #   p s.to_list #=> List[123]
     # @example A Stream which has two elements: "abc" and "def".
     #   s = Stream.cons(->{"abc"},
     #         ->{Stream.cons(->{"def"}, ->{Stream.null})})
+    #   p s.to_list #=> List["abc", "def"]
     #
     # @param [Proc] head a +Proc+ whose value is the head of +self+.
     # @param [Proc] tail a +Proc+ whose value is the tail of +self+.
@@ -71,18 +73,17 @@ module Immutable
     end
 
     # Creates a new stream whose head is the value of +block+ and whose tail
-    # is +self+. The name +snoc+ is +cons+ spelled backwards and means "cons
-    # on the right".
+    # is +self+.
     #
     # @example A Stream which has 123 as the only element.
-    #   s = Stream.null.snoc {123}
+    #   s = Stream.null.prepend {123}
     #   p s.to_list #=> List[123]
     # @example A Stream which has two elements: "abc" and "def".
-    #   s = Stream.null.snoc {"def"}.snoc {"abc"}
+    #   s = Stream.null.prepend {"def"}.prepend {"abc"}
     #   p s.to_list #=> List["abc", "def"]
     #
     # @return [Stream] the new stream.
-    def snoc(&block)
+    def prepend(&block)
       Stream.eager(Pair.new(Stream.delay(&block), self))
     end
 

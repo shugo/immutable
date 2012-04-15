@@ -33,9 +33,9 @@ module Immutable
       assert_equal(Stream[1, 3, 5], Stream.from(1, 2).take(3))
     end
 
-    def test_snoc
-      assert_equal(Stream[1], Stream.null.snoc { 1 })
-      assert_equal(Stream[1, 2], Stream.null.snoc { 2 }.snoc { 1 })
+    def test_prepend
+      assert_equal(Stream[1], Stream.null.prepend { 1 })
+      assert_equal(Stream[1, 2], Stream.null.prepend { 2 }.prepend { 1 })
     end
 
     def test_head
