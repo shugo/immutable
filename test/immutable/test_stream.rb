@@ -284,11 +284,14 @@ module Immutable
       s1 = Stream.from(0)
       s2 = Stream.from(0, 2)
       s3 = Stream.from(0, 3)
-      s = s1.zip_with(s2, s3) { |x, y, z|
-        x + y + z
-      }
       assert_equal(Stream[[0, 0, 0], [1, 2, 3], [2, 4, 6]],
                    s1.zip(s2, s3).take(3))
+
+      s1 = Stream[0, 1, 2]
+      s2 = Stream.from(0, 2)
+      s3 = Stream.from(0, 3)
+      assert_equal(Stream[[0, 0, 0], [1, 2, 3], [2, 4, 6]],
+                   s1.zip(s2, s3))
     end
 
     def test_zip_with
@@ -299,6 +302,14 @@ module Immutable
         x + y + z
       }
       assert_equal(Stream[0, 6, 12, 18], s.take(4))
+
+      s1 = Stream[0, 1, 2, 3]
+      s2 = Stream.from(0, 2)
+      s3 = Stream.from(0, 3)
+      s = s1.zip_with(s2, s3) { |x, y, z|
+        x + y + z
+      }
+      assert_equal(Stream[0, 6, 12, 18], s)
     end
   end
 end

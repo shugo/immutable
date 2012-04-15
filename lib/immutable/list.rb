@@ -579,5 +579,25 @@ module Immutable
         @tail.find(&block)
       end
     end
+
+    def Nil.zip(*xss)
+      Nil
+    end
+
+    def zip(*xss)
+      heads = xss.map { |xs| xs.null? ? nil : xs.head }
+      tails = xss.map { |xs| xs.null? ? Nil : xs.tail }
+      Cons[[head, *heads], tail.zip(*tails)]
+    end
+
+    def Nil.zip_with(*xss, &block)
+      Nil
+    end
+
+    def zip_with(*xss, &block)
+      heads = xss.map { |xs| xs.null? ? nil : xs.head }
+      tails = xss.map { |xs| xs.null? ? Nil : xs.tail }
+      Cons[yield(head, *heads), tail.zip_with(*tails, &block)]
+    end
   end
 end

@@ -281,5 +281,23 @@ module Immutable
       }
       assert_equal(List["foo", "bar", "baz"], xs)
     end
+
+    def test_zip
+      xs = List[0, 1, 2]
+      ys = List[0, 2, 4]
+      zs = List[0, 3, 6]
+      assert_equal(List[[0, 0, 0], [1, 2, 3], [2, 4, 6]],
+                   xs.zip(ys, zs))
+    end
+
+    def test_zip_with
+      xs = List[0, 1, 2]
+      ys = List[0, 2, 4]
+      zs = List[0, 3, 6]
+      l = xs.zip_with(ys, zs) { |x, y, z|
+        x + y + z
+      }
+      assert_equal(List[0, 6, 12], l)
+    end
   end
 end

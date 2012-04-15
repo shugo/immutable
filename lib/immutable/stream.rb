@@ -440,20 +440,28 @@ module Immutable
       }
     end
 
-    def zip(*xss, &block)
+    def zip(*xss)
       Stream.lazy {
-        heads = xss.map { |xs| xs.null? ? nil : xs.head }
-        tails = xss.map { |xs| xs.null? ? Stream.null : xs.tail }
-        Stream.cons ->{ [head, *heads] }, ->{ tail.zip(*tails, &block) }
+        if null?
+          self
+        else
+          heads = xss.map { |xs| xs.null? ? nil : xs.head }
+          tails = xss.map { |xs| xs.null? ? Stream.null : xs.tail }
+          Stream.cons ->{ [head, *heads] }, ->{ tail.zip(*tails) }
+        end
       }
     end
 
     def zip_with(*xss, &block)
       Stream.lazy {
-        heads = xss.map { |xs| xs.null? ? nil : xs.head }
-        tails = xss.map { |xs| xs.null? ? Stream.null : xs.tail }
-        h = yield(head, *heads)
-        Stream.cons ->{ h }, ->{ tail.zip_with(*tails, &block) }
+        if null?
+          self
+        else
+          heads = xss.map { |xs| xs.null? ? nil : xs.head }
+          tails = xss.map { |xs| xs.null? ? Stream.null : xs.tail }
+          h = yield(head, *heads)
+          Stream.cons ->{ h }, ->{ tail.zip_with(*tails, &block) }
+        end
       }
     end
   end
