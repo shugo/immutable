@@ -89,7 +89,7 @@ module Immutable
 
     # Creates a new stream. Note that the arguments are evaluated eagerly.
     #
-    # @param [Object] args the elements of the stream.
+    # @param [Array<Object>] args the elements of the stream.
     # @return [Stream] the new stream.
     def self.[](*args)
       from_enum(args)
@@ -440,6 +440,12 @@ module Immutable
       }
     end
 
+    # Takes zero or more streams and returns a new stream in which each
+    # element is an array of the corresponding elements of +self+ and the
+    # input streams.
+    #
+    # @param [Array<Stream>] xss the input streams.
+    # @return [Stream] the new stream.
     def zip(*xss)
       Stream.lazy {
         if null?
@@ -452,6 +458,14 @@ module Immutable
       }
     end
 
+    # Takes zero or more streams and returns the stream obtained by applying
+    # the given block to an array of the corresponding elements of +self+
+    # and the input streams.
+    # <code>xs.zip_with(*yss, &block)</code> is equivalent to
+    # <code>xs.zip(*yss).map(&block)</code>.
+    #
+    # @param [Array<Stream>] xss the input streams.
+    # @return [Stream] the new stream.
     def zip_with(*xss, &block)
       Stream.lazy {
         if null?
