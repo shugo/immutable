@@ -62,6 +62,15 @@ module Immutable
       assert_equal(3, Stream[1, 2, 3].last)
     end
 
+    def test_init
+      assert_raise(List::EmptyError) do
+        Stream.null.init.force
+      end
+      assert_equal(Stream[], Stream[1].init)
+      assert_equal(Stream[1], Stream[1, 2].init)
+      assert_equal(Stream[1, 2], Stream[1, 2, 3].init)
+    end
+
     def test_aref
       s = Stream[1, 2, 3, 4, 5]
       2.times do

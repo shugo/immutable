@@ -162,9 +162,28 @@ module Immutable
     # Returns the stream stored in the tail of +self+. If +self+ is empty,
     # <code>Immutable::List::EmptyError</code> is raised.
     #
-    # @return [List] the stream stored in the tail of +self+.
+    # @return [Stream] the stream stored in the tail of +self+.
     def tail
       force.tail
+    end
+
+    # Returns all the elements of +self+ except the last one.
+    # If +self+ is empty, <code>Immutable::List::EmptyError</code> is
+    # raised.
+    #
+    # @return [Stream] the elements of +self+ except the last one.
+    def init
+      Stream.lazy {
+        if null?
+          raise List::EmptyError
+        else
+          if tail.null?
+            Stream.null
+          else
+            Stream.cons(->{head}, ->{tail.init})
+          end
+        end
+      }
     end
 
     # Creates a string representation of +self+.
