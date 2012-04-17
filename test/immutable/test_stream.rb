@@ -224,6 +224,33 @@ module Immutable
       assert_equal(Stream["1", "2", "3"], Stream[1, 2, 3].map(&:to_s))
     end
 
+    def test_reverse
+      assert_equal(Stream[], Stream[].reverse)
+      assert_equal(Stream[1], Stream[1].reverse)
+      assert_equal(Stream[2, 1], Stream[1, 2].reverse)
+      assert_equal(Stream[3, 2, 1], Stream[1, 2, 3].reverse)
+    end
+
+    def test_intersperse
+      assert_equal(Stream[], Stream[].intersperse(0))
+      assert_equal(Stream[1], Stream[1].intersperse(0))
+      assert_equal(Stream[1, 0, 2], Stream[1, 2].intersperse(0))
+      assert_equal(Stream[1, 0, 2, 0, 3], Stream[1, 2, 3].intersperse(0))
+      assert_equal(Stream[1, 0, 2, 0, 3],
+                   Stream.from(1).intersperse(0).take(5))
+    end
+
+    def test_intercalate
+      assert_equal(Stream[], Stream[].intercalate(Stream[0]))
+      assert_equal(Stream[1], Stream[Stream[1]].intercalate(Stream[0]))
+      xs = Stream[Stream[1, 2], Stream[3, 4], Stream[5, 6]].
+        intercalate(Stream[0])
+      assert_equal(Stream[1, 2, 0, 3, 4, 0, 5, 6], xs)
+      xs = Stream.from(1, 2).map { |x| Stream[x, x + 1] }.
+        intercalate(Stream[0]).take(8)
+      assert_equal(Stream[1, 2, 0, 3, 4, 0, 5, 6], xs)
+    end
+
     def test_filter
       assert_equal(Stream[], Stream[].filter(&:odd?))
       assert_equal(Stream[1, 3, 5], Stream[1, 2, 3, 4, 5].filter(&:odd?))

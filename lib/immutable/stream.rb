@@ -337,6 +337,52 @@ module Immutable
       }
     end
 
+    # Returns the elements of +self+ in reverse order.
+    #
+    # @return [Stream] the reversed stream.
+    def reverse
+      foldl(Stream.null) { |x, y| Stream.cons(->{y}, ->{x}) }
+    end
+
+    # Returns a new stream obtained by inserting +sep+ in between the
+    # elements of +self+.
+    #
+    # @param [Object] sep the object to insert between elements.
+    # @return [Stream] the new stream.
+    def intersperse(sep)
+      Stream.lazy {
+        if null?
+          self
+        else
+          Stream.cons(->{head}, ->{tail.prepend_to_all(sep)})
+        end
+      }
+    end
+
+    def prepend_to_all(sep)
+      Stream.lazy {
+        if null?
+          self
+        else
+          Stream.cons ->{sep}, ->{
+            Stream.cons ->{head}, ->{tail.prepend_to_all(sep)}
+          }
+        end
+      }
+    end
+    protected :prepend_to_all
+
+    # Returns a new stream obtained by inserting +xs+ in between the streams
+    # in +self+ and concatenates the result.
+    # <code>xss.intercalate(xs)</code> is equivalent to
+    # <code>xss.intersperse(xs).flatten</code>.
+    #
+    # @param [Stream] xs the stream to insert between streams.
+    # @return [Stream] the new stream.
+    def intercalate(xs)
+      intersperse(xs).flatten
+    end
+
     # Returns the elements in +self+ for which the given block evaluates to
     # true.
     #
