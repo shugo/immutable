@@ -108,7 +108,7 @@ module Immutable
       # this method should be overriden
     end
 
-    # Returns all the element of +self+ except the last one.
+    # Returns all the elements of +self+ except the last one.
     # If +self+ is empty, <code>Immutable::List::EmptyError</code> is
     # raised.
     #
@@ -275,8 +275,8 @@ module Immutable
     def [](n)
     end
 
-    # Returns the first +n+ elements of +self+, or +self+ itself if
-    # <code>n > self.length</code>.
+    # Returns the first +n+ elements of +self+, or all the elements of
+    # +self+ if <code>n > self.length</code>.
     #
     # @param [Integer] n the number of elements to take.
     # @return [List] the first +n+ elements of +self+.
