@@ -383,6 +383,23 @@ module Immutable
       intersperse(xs).flatten
     end
 
+    # Returns the first element in +self+ for which the given block
+    # evaluates to true.  If such an element is not found, it
+    # returns <code>nil</code>.
+    #
+    # @return [Object] the found element.
+    def find(&block)
+      if null?
+        nil
+      else
+        if yield(head)
+          head
+        else
+          tail.find(&block)
+        end
+      end
+    end
+
     # Returns the elements in +self+ for which the given block evaluates to
     # true.
     #

@@ -251,6 +251,14 @@ module Immutable
       assert_equal(Stream[1, 2, 0, 3, 4, 0, 5, 6], xs)
     end
 
+    def test_find
+      assert_equal(nil, Stream[].find(&:odd?))
+      assert_equal(1, Stream[1, 2, 3, 4, 5].find(&:odd?))
+      assert_equal(2, Stream[1, 2, 3, 4, 5].find(&:even?))
+      assert_equal(1, Stream.from(1).find(&:odd?))
+      assert_equal(2, Stream.from(1).find(&:even?))
+    end
+
     def test_filter
       assert_equal(Stream[], Stream[].filter(&:odd?))
       assert_equal(Stream[1, 3, 5], Stream[1, 2, 3, 4, 5].filter(&:odd?))
