@@ -273,6 +273,7 @@ module Immutable
     #
     # @return [Object] the +n+th element.
     def [](n)
+      # this method should be overriden
     end
 
     # Returns the first +n+ elements of +self+, or all the elements of
