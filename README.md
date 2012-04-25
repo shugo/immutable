@@ -10,6 +10,7 @@ Currently, immutable provides the following classes and modules:
 * Immutable::Map
 * Immutable::Promise
 * Immutable::Stream
+* Immutable::Queue
 
 Install
 ========================
