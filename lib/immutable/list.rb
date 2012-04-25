@@ -29,10 +29,10 @@ module Immutable
 
     # Creates a new list populated with the given objects.
     #
-    # @param [Array<Object>] args the elements of the list.
+    # @param [Array<Object>] elements the elements of the list.
     # @return [List] the new list.
-    def self.[](*args)
-      from_array(args)
+    def self.[](*elements)
+      from_array(elements)
     end
 
     # Converts the given array to a list.

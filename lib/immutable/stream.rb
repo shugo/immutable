@@ -89,10 +89,10 @@ module Immutable
 
     # Creates a new stream. Note that the arguments are evaluated eagerly.
     #
-    # @param [Array<Object>] args the elements of the stream.
+    # @param [Array<Object>] elements the elements of the stream.
     # @return [Stream] the new stream.
-    def self.[](*args)
-      from_enum(args)
+    def self.[](*elements)
+      from_enum(elements)
     end
 
     # Creates a new stream from an +Enumerable+ object.

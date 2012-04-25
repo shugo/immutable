@@ -23,10 +23,10 @@ module Immutable
 
     # Creates a new queue populated with the given objects.
     #
-    # @param [Array<Object>] args the elements of the queue.
+    # @param [Array<Object>] elements the elements of the queue.
     # @return [List] the new queue.
-    def self.[](*args)
-      args.inject(empty, &:snoc)
+    def self.[](*elements)
+      elements.inject(empty, &:snoc)
     end
 
     # Returns whether +self+ is empty.
