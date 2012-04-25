@@ -1,20 +1,20 @@
 require "immutable/foldable"
 
 module Immutable
-  # <code>Immutable::Map</code> represents an immutable map from keys to
+  # +Immutable::Map+ represents an immutable map from keys to
   # values.
   #
-  # <code>Immutable::Map</code> is an abstract class and
-  # <code>Immutable::Map.[]</code> should be used instead of
-  # <code>Immutable::Map.new</code>. For example:
+  # +Immutable::Map+ is an abstract class and
+  # {Immutable::Map.[]} should be used instead of
+  # {Immutable::Map.new}. For example:
   #
   #   include Immutable
   #   p Map[]            #=> Map[]
   #   p Map[a: 1, b: 2]  #=> Map[:a => 1, :b => 2]
   #
-  # <code>Immutable::Map#insert</code> inserts a key/value pair and
-  # returns a new <code>Immutable::Map</code>. The original map never be
-  # changed by <code>Immutable::Map#insert</code>. For example:
+  # {#insert} inserts a key/value pair and
+  # returns a new +Immutable::Map+. The original map never be
+  # changed by {#insert}. For example:
   #
   #   m = Map[a: 1]
   #   p m   #=> Map[:a => 1]
@@ -40,7 +40,7 @@ module Immutable
     end
 
     # Returns a map that has the same key/value pairs as the
-    # <code>Hash</code> object +h+.
+    # +Hash+ object +h+.
     def self.[](h = {})
       h.inject(Leaf) { |m, (k, v)| m.insert(k, v) }
     end
@@ -50,7 +50,7 @@ module Immutable
       ins(key, value).make_black
     end
 
-    # Returns the value at +key+ in +self+, or <code>nil</code> if +key+
+    # Returns the value at +key+ in +self+, or +nil+ if +key+
     # isn't in +self+.
     def [](key)
       raise ScriptError, "this method should be overriden"

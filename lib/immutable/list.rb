@@ -1,18 +1,18 @@
 require "immutable/foldable"
 
 module Immutable
-  # <code>Immutable::List</code> represents an immutable list.
+  # +Immutable::List+ represents an immutable list.
   #
-  # <code>Immutable::List</code> is an abstract class and
-  # <code>Immutable::List.[]</code> should be used instead of
-  # <code>Immutable::List.new</code>. For example:
+  # +Immutable::List+ is an abstract class and
+  # {Immutable::List.[]} should be used instead of
+  # {Immutable::List.new}. For example:
   #
   #   include Immutable
   #   p List[]      #=> List[]
   #   p List[1, 2]  #=> List[1, 2]
   #
-  # <code>Immutable::Nil</code> represents an empty list, and
-  # <code>Immutable::Cons</code> represents a cons cell, which is a node in
+  # +Immutable::Nil+ represents an empty list, and
+  # +Immutable::Cons+ represents a cons cell, which is a node in
   # a list. For example:
   #
   #   p Nil                    #=> List[]
@@ -77,7 +77,7 @@ module Immutable
     end
 
     # Returns the first element of +self+. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [Object] the first element of +self+.
     def head
@@ -85,7 +85,7 @@ module Immutable
     end
 
     # Returns the first element of +self+. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [Object] the first element of +self+.
     def first
@@ -93,7 +93,7 @@ module Immutable
     end
 
     # Returns the last element of +self+. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [Object] the last element of +self+.
     def last
@@ -101,7 +101,7 @@ module Immutable
     end
 
     # Returns the elements after the head of +self+. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [List] the elements after the head of +self+.
     def tail
@@ -109,7 +109,7 @@ module Immutable
     end
 
     # Returns all the elements of +self+ except the last one.
-    # If +self+ is empty, <code>Immutable::List::EmptyError</code> is
+    # If +self+ is empty, +Immutable::List::EmptyError+ is
     # raised.
     #
     # @return [List] the elements of +self+ except the last one.
@@ -157,8 +157,8 @@ module Immutable
 
     # Returns a new list obtained by inserting +xs+ in between the lists in
     # +self+ and concatenates the result.
-    # <code>xss.intercalate(xs)</code> is equivalent to
-    # <code>xss.intersperse(xs).flatten</code>.
+    # +xss.intercalate(xs)+ is equivalent to
+    # +xss.intersperse(xs).flatten+.
     #
     # @param [List] xs the list to insert between lists.
     # @return [List] the new list.
@@ -195,7 +195,7 @@ module Immutable
     end
 
     # Reduces +self+ using +block+ from right to left. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [Object] the reduced value.
     def foldr1(&block)
@@ -214,7 +214,7 @@ module Immutable
     end
 
     # Reduces +self+ using +block+ from left to right. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [Object] the reduced value.
     def foldl1(&block)
@@ -228,7 +228,6 @@ module Immutable
       foldr(Nil) { |x, xs| x + xs }
     end
 
-    # An alias of <code>flatten</code>.
     alias concat flatten
 
     # Returns the list obtained by concatenating the results of the given
@@ -239,22 +238,20 @@ module Immutable
       foldr(Nil) { |x, xs| yield(x) + xs }
     end
 
-    # An alias of <code>flat_map</code>.
     alias concat_map flat_map
 
-    # An alias of <code>flat_map</code>.
     alias bind flat_map
 
     # Builds a list from the seed value +e+ and the given block. The block
-    # takes a seed value and returns <code>nil</code> if the seed should
-    # unfold to the empty list, or returns <code>[a, b]</code>, where
-    # <code>a</code> is the head of the list and <code>b</code> is the next
+    # takes a seed value and returns +nil+ if the seed should
+    # unfold to the empty list, or returns +[a, b]+, where
+    # +a+ is the head of the list and +b+ is the next
     # seed from which to unfold the tail.  For example:
     #
     #   xs = List.unfoldr(3) { |x| x == 0 ? nil : [x, x - 1] }
     #   p xs #=> List[3, 2, 1]
     #
-    # <code>unfoldr</code> is the dual of <code>foldr</code>.
+    # +unfoldr+ is the dual of +foldr+.
     #
     # @param [Object] e the seed value.
     # @return [List] the list built from the seed value and the block.
@@ -277,7 +274,7 @@ module Immutable
     end
 
     # Returns the first +n+ elements of +self+, or all the elements of
-    # +self+ if <code>n > self.length</code>.
+    # +self+ if +n > self.length+.
     #
     # @param [Integer] n the number of elements to take.
     # @return [List] the first +n+ elements of +self+.
@@ -286,7 +283,7 @@ module Immutable
     end
 
     # Returns the suffix of +self+ after the first +n+ elements, or
-    # <code>List[]</code> if <code>n > self.length</code>.
+    # +List[]+ if +n > self.length+.
     #
     # @param [Integer] n the number of elements to drop.
     # @return [List] the suffix of +self+ after the first +n+ elements.
@@ -303,7 +300,7 @@ module Immutable
     end
 
     # Returns the suffix remaining after
-    # <code>self.take_while(&block)</code>.
+    # +self.take_while(&block)+.
     #
     # @return [List] the suffix of the elements of +self+.
     def drop_while(&block)
@@ -319,7 +316,7 @@ module Immutable
 
     # Returns the first element in +self+ for which the given block
     # evaluates to true.  If such an element is not found, it
-    # returns <code>nil</code>.
+    # returns +nil+.
     #
     # @return [Object] the found element.
     def find(&block)
@@ -353,8 +350,8 @@ module Immutable
     # Takes zero or more lists and returns the list obtained by applying the
     # given block to an array of the corresponding elements of +self+ and
     # the input lists.
-    # <code>xs.zip_with(*yss, &block)</code> is equivalent to
-    # <code>xs.zip(*yss).map(&block)</code>.
+    # +xs.zip_with(*yss, &block)+ is equivalent to
+    # +xs.zip(*yss).map(&block)+.
     #
     # @param [Array<List>] xss the input lists.
     # @return [List] the new list.

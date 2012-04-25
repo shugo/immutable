@@ -139,7 +139,7 @@ module Immutable
     alias empty? null?
 
     # Returns the first element of +self+. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [Object] the first element of +self+.
     def head
@@ -148,7 +148,7 @@ module Immutable
     alias first head
 
     # Returns the last element of +self+. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [Object] the last element of +self+.
     def last
@@ -160,7 +160,7 @@ module Immutable
     end
 
     # Returns the stream stored in the tail of +self+. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [Stream] the stream stored in the tail of +self+.
     def tail
@@ -168,7 +168,7 @@ module Immutable
     end
 
     # Returns all the elements of +self+ except the last one.
-    # If +self+ is empty, <code>Immutable::List::EmptyError</code> is
+    # If +self+ is empty, +Immutable::List::EmptyError+ is
     # raised.
     #
     # @return [Stream] the elements of +self+ except the last one.
@@ -239,7 +239,7 @@ module Immutable
     end
 
     # Reduces +self+ using +block+ from right to left. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [Object] the reduced value.
     def foldr1(&block)
@@ -266,7 +266,7 @@ module Immutable
     end
 
     # Reduces +self+ using +block+ from left to right. If +self+ is empty,
-    # <code>Immutable::List::EmptyError</code> is raised.
+    # +Immutable::List::EmptyError+ is raised.
     #
     # @return [Object] the reduced value.
     def foldl1(&block)
@@ -374,8 +374,8 @@ module Immutable
 
     # Returns a new stream obtained by inserting +xs+ in between the streams
     # in +self+ and concatenates the result.
-    # <code>xss.intercalate(xs)</code> is equivalent to
-    # <code>xss.intersperse(xs).flatten</code>.
+    # +xss.intercalate(xs)+ is equivalent to
+    # +xss.intersperse(xs).flatten+.
     #
     # @param [Stream] xs the stream to insert between streams.
     # @return [Stream] the new stream.
@@ -385,7 +385,7 @@ module Immutable
 
     # Returns the first element in +self+ for which the given block
     # evaluates to true.  If such an element is not found, it
-    # returns <code>nil</code>.
+    # returns +nil+.
     #
     # @return [Object] the found element.
     def find(&block)
@@ -433,7 +433,7 @@ module Immutable
     end
 
     # Returns the first +n+ elements of +self+, or +self+ itself if
-    # <code>n > self.length</code>.
+    # +n > self.length+.
     #
     # @param [Integer] n the number of elements to take.
     # @return [Stream] the first +n+ elements of +self+.
@@ -448,7 +448,7 @@ module Immutable
     end
 
     # Returns the suffix of +self+ after the first +n+ elements, or
-    # <code>Stream[]</code> if <code>n > self.length</code>.
+    # +Stream[]+ if +n > self.length+.
     #
     # @param [Integer] n the number of elements to drop.
     # @return [Stream] the suffix of +self+ after the first +n+ elements.
@@ -477,7 +477,7 @@ module Immutable
     end
 
     # Returns the suffix remaining after
-    # <code>self.take_while(&block)</code>.
+    # +self.take_while(&block)+.
     #
     # @return [Stream] the suffix of the elements of +self+.
     def drop_while(&block)
@@ -498,15 +498,15 @@ module Immutable
     end
 
     # Builds a stream from the seed value +e+ and the given block. The block
-    # takes a seed value and returns <code>nil</code> if the seed should
-    # unfold to the empty stream, or returns <code>[a, b]</code>, where
-    # <code>a</code> is the head of the stream and <code>b</code> is the
+    # takes a seed value and returns +nil+ if the seed should
+    # unfold to the empty stream, or returns +[a, b]+, where
+    # +a+ is the head of the stream and +b+ is the
     # next seed from which to unfold the tail.  For example:
     #
     #   xs = List.unfoldr(3) { |x| x == 0 ? nil : [x, x - 1] }
     #   p xs #=> List[3, 2, 1]
     #
-    # <code>unfoldr</code> is the dual of <code>foldr</code>.
+    # +unfoldr+ is the dual of +foldr+.
     #
     # @param [Object] e the seed value.
     # @return [Stream] the stream built from the seed value and the block.
@@ -543,8 +543,8 @@ module Immutable
     # Takes zero or more streams and returns the stream obtained by applying
     # the given block to an array of the corresponding elements of +self+
     # and the input streams.
-    # <code>xs.zip_with(*yss, &block)</code> is equivalent to
-    # <code>xs.zip(*yss).map(&block)</code>.
+    # +xs.zip_with(*yss, &block)+ is equivalent to
+    # +xs.zip(*yss).map(&block)+.
     #
     # @param [Array<Stream>] xss the input streams.
     # @return [Stream] the new stream.
