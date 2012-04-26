@@ -11,6 +11,7 @@ Currently, immutable provides the following classes and modules:
 * Immutable::Promise
 * Immutable::Stream
 * Immutable::Queue
+* Immutable::Deque
 
 Install
 ========================
