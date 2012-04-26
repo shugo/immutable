@@ -30,7 +30,7 @@ def run(bm, deque, num, method)
 end
 
 Benchmark.bmbm do |bm|
-  deques = [10, 100, 1000].inject(Immutable::Map.empty) { |m, n|
+  deques = [100, 1000, 10000].inject(Immutable::Map.empty) { |m, n|
     m.insert(n, (1..n).inject(Immutable::Deque.empty, &:snoc))
   }
   for method in [:snoc, :head, :tail]

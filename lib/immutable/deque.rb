@@ -16,7 +16,7 @@ module Immutable
       @rear = rear
       @rear_len = rear_len
       @rear_schedule = rear_schedule
-      @c = 2  # @c should be 2 or 3
+      @c = 3  # @c should be 2 or 3
     end
 
     # Returns an empty deque.
