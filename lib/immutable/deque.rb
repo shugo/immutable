@@ -16,21 +16,21 @@ module Immutable
       @rear = rear
       @rear_len = rear_len
       @rear_schedule = rear_schedule
-      @c = 2
+      @c = 2  # @c should be 2 or 3
     end
 
-    # Returns an empty queue.
+    # Returns an empty deque.
     #
-    # @return [Deque] the empty queue.
+    # @return [Deque] the empty deque.
     def self.empty
       Deque.new(Stream.null, 0, Stream.null,
                 Stream.null, 0, Stream.null)
     end
 
-    # Creates a new queue populated with the given objects.
+    # Creates a new deque populated with the given objects.
     #
-    # @param [Array<Object>] elements the elements of the queue.
-    # @return [List] the new queue.
+    # @param [Array<Object>] elements the elements of the deque.
+    # @return [Deque] the new deque.
     def self.[](*elements)
       elements.inject(empty, &:snoc)
     end
@@ -95,9 +95,9 @@ module Immutable
       elsif r_len > @c * f_len + 1
         i = (f_len + r_len) / 2
         j = (f_len + r_len) - i
-        f2 = rotate_drop(f, j, r)
-        r2 = r.take(j)
-        self.class.new(f2, i, f2, r2, j, r2)
+        f2 = rotate_drop(f, i, r)
+        r2 = r.take(i)
+        self.class.new(f2, j, f2, r2, i, r2)
       else
         self.class.new(f, f_len, f_schedule, r, r_len, r_schedule)
       end
@@ -107,7 +107,7 @@ module Immutable
     # Adds a new element at the head of +self+.
     #
     # @param [Object] x the element to add.
-    # @return [Deque] a new queue.
+    # @return [Deque] a new deque.
     def cons(x)
       queue(Stream.cons(->{x}, ->{@front}), @front_len + 1,
             exec1(@front_schedule),
