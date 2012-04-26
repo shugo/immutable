@@ -18,13 +18,13 @@ module Immutable
     #
     # @return [Queue] the empty queue.
     def self.empty
-      Queue.new(Stream.null, Nil, Stream.null)
+      new(Stream.null, Nil, Stream.null)
     end
 
     # Creates a new queue populated with the given objects.
     #
     # @param [Array<Object>] elements the elements of the queue.
-    # @return [List] the new queue.
+    # @return [Queue] the new queue.
     def self.[](*elements)
       elements.inject(empty, &:snoc)
     end
@@ -53,9 +53,9 @@ module Immutable
     def queue(front, rear, schedule)
       if schedule.null?
         f = rotate(front, rear, Stream.null)
-        Queue.new(f, Nil, f)
+        self.class.new(f, Nil, f)
       else
-        Queue.new(front, rear, schedule.tail)
+        self.class.new(front, rear, schedule.tail)
       end
     end
     private :queue
