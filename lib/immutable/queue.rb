@@ -38,30 +38,6 @@ module Immutable
 
     alias null? empty?
 
-    def rotate(front, rear, accumulator)
-      Stream.lazy {
-        if front.null?
-          Stream.cons(->{rear.head}, ->{accumulator})
-        else
-          Stream.cons(->{front.head}, ->{
-            rotate(front.tail, rear.tail,
-                   Stream.cons(->{rear.head}, ->{accumulator}))
-          })
-        end
-      }
-    end
-    private :rotate
-
-    def queue(front, rear, schedule)
-      if schedule.null?
-        f = rotate(front, rear, Stream.null)
-        self.class.new(f, Nil, f)
-      else
-        self.class.new(front, rear, schedule.tail)
-      end
-    end
-    private :queue
-
     # Adds a new element at the end of +self+.
     #
     # @param [Object] x the element to add.
@@ -101,6 +77,30 @@ module Immutable
       unless @front.null?
         yield(head)
         tail.each(&block)
+      end
+    end
+
+    private
+
+    def rotate(front, rear, accumulator)
+      Stream.lazy {
+        if front.null?
+          Stream.cons(->{rear.head}, ->{accumulator})
+        else
+          Stream.cons(->{front.head}, ->{
+            rotate(front.tail, rear.tail,
+                   Stream.cons(->{rear.head}, ->{accumulator}))
+          })
+        end
+      }
+    end
+
+    def queue(front, rear, schedule)
+      if schedule.null?
+        f = rotate(front, rear, Stream.null)
+        self.class.new(f, Nil, f)
+      else
+        self.class.new(front, rear, schedule.tail)
       end
     end
   end

@@ -51,61 +51,6 @@ module Immutable
       @front_len + @rear_len
     end
 
-    def exec1(s)
-      if s.null?
-        s
-      else
-        s.tail
-      end
-    end
-    private :exec1
-
-    def exec2(s)
-      exec1(exec1(s))
-    end
-    private :exec2
-
-    def rotate_rev(r, f, a)
-      if r.null?
-        f.reverse + a
-      else
-        Stream.cons(->{r.head},
-                    ->{rotate_rev(r.tail, f.drop(@c),
-                                  f.take(@c).reverse + a)})
-      end
-    end
-    private :rotate_rev
-
-    def rotate_drop(r, i, f)
-      if i < @c
-        rotate_rev(r, f.drop(i), Stream.null)
-      else
-        x = r.head
-        r2 = r.tail
-        Stream.cons(->{x}, ->{rotate_drop(r2, i - @c, f.drop(@c))})
-      end
-    end
-    private :rotate_drop
-
-    def queue(f, f_len, f_schedule, r, r_len, r_schedule)
-      if f_len > @c * r_len + 1
-        i = (f_len + r_len) / 2
-        j = (f_len + r_len) - i
-        f2 = f.take(i)
-        r2 = rotate_drop(r, i, f)
-        self.class.new(f2, i, f2, r2, j, r2)
-      elsif r_len > @c * f_len + 1
-        j = (f_len + r_len) / 2
-        i = (f_len + r_len) - j
-        f2 = rotate_drop(f, j, r)
-        r2 = r.take(j)
-        self.class.new(f2, i, f2, r2, j, r2)
-      else
-        self.class.new(f, f_len, f_schedule, r, r_len, r_schedule)
-      end
-    end
-    private :queue
-
     # Adds a new element at the head of +self+.
     #
     # @param [Object] x the element to add.
@@ -211,6 +156,57 @@ module Immutable
         tail.each(&block)
       end
     end
+
+    private
+
+    def exec1(s)
+      if s.null?
+        s
+      else
+        s.tail
+      end
+    end
+
+    def exec2(s)
+      exec1(exec1(s))
+    end
+
+    def rotate_rev(r, f, a)
+      if r.null?
+        f.reverse + a
+      else
+        Stream.cons(->{r.head},
+                    ->{rotate_rev(r.tail, f.drop(@c),
+                                  f.take(@c).reverse + a)})
+      end
+    end
+
+    def rotate_drop(r, i, f)
+      if i < @c
+        rotate_rev(r, f.drop(i), Stream.null)
+      else
+        x = r.head
+        r2 = r.tail
+        Stream.cons(->{x}, ->{rotate_drop(r2, i - @c, f.drop(@c))})
+      end
+    end
+
+    def queue(f, f_len, f_schedule, r, r_len, r_schedule)
+      if f_len > @c * r_len + 1
+        i = (f_len + r_len) / 2
+        j = (f_len + r_len) - i
+        f2 = f.take(i)
+        r2 = rotate_drop(r, i, f)
+        self.class.new(f2, i, f2, r2, j, r2)
+      elsif r_len > @c * f_len + 1
+        j = (f_len + r_len) / 2
+        i = (f_len + r_len) - j
+        f2 = rotate_drop(f, j, r)
+        r2 = r.take(j)
+        self.class.new(f2, i, f2, r2, j, r2)
+      else
+        self.class.new(f, f_len, f_schedule, r, r_len, r_schedule)
+      end
+    end
   end
 end
-
