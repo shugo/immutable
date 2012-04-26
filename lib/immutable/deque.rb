@@ -93,11 +93,11 @@ module Immutable
         r2 = rotate_drop(r, i, f)
         self.class.new(f2, i, f2, r2, j, r2)
       elsif r_len > @c * f_len + 1
-        i = (f_len + r_len) / 2
-        j = (f_len + r_len) - i
-        f2 = rotate_drop(f, i, r)
-        r2 = r.take(i)
-        self.class.new(f2, j, f2, r2, i, r2)
+        j = (f_len + r_len) / 2
+        i = (f_len + r_len) - j
+        f2 = rotate_drop(f, j, r)
+        r2 = r.take(j)
+        self.class.new(f2, i, f2, r2, j, r2)
       else
         self.class.new(f, f_len, f_schedule, r, r_len, r_schedule)
       end
