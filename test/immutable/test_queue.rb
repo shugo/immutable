@@ -39,5 +39,32 @@ module Immutable
       q = a.inject(Queue.empty, :snoc)
       assert_equal(a, q.to_a)
     end
+
+    def test_invariant
+      a = (1..100).to_a.shuffle
+      queue = a.inject(Queue.empty) { |q, i|
+        assert_queue_invariant(q)
+        q2 = q.snoc(i)
+        if rand(3) == 0
+          q2.tail
+        else
+          q2
+        end
+      }
+      assert_queue_invariant(queue)
+      until queue.empty?
+        queue = queue.tail
+        assert_queue_invariant(queue)
+      end
+    end
+
+    private
+
+    def assert_queue_invariant(d)
+      front = d.instance_variable_get(:@front)
+      rear = d.instance_variable_get(:@rear)
+      schedule = d.instance_variable_get(:@schedule)
+      assert_equal(schedule.length, front.length - rear.length)
+    end
   end
 end

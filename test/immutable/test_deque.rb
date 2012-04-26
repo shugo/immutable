@@ -79,9 +79,17 @@ module Immutable
       deque = a.inject(Deque.empty) { |d, i|
         assert_deque_invariants(d)
         if rand(2) == 0
-          d.snoc(i)
+          d2 = d.snoc(i)
         else
-          d.cons(i)
+          d2 = d.cons(i)
+        end
+        case rand(4)
+        when 0
+          d2.tail
+        when 1
+          d2.init
+        else
+          d2
         end
       }
       assert_deque_invariants(deque)
