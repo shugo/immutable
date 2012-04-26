@@ -42,6 +42,8 @@ module Immutable
       length == 0
     end
 
+    alias null? empty?
+
     # Returns the number of elements in +self+. May be zero.
     #
     # @return [Integer] the number of elements in +self+.
@@ -113,6 +115,8 @@ module Immutable
             exec1(@front_schedule),
             @rear, @rear_len, exec1(@rear_schedule))
     end
+
+    alias unshift cons
     alias prepend cons
 
     # Returns the first element of +self+. If +self+ is empty,
@@ -131,6 +135,8 @@ module Immutable
       end
     end
 
+    alias first head
+
     # Returns the elements after the head of +self+. If +self+ is empty,
     # +Immutable::List::EmptyError+ is raised.
     #
@@ -148,6 +154,8 @@ module Immutable
       end
     end
 
+    alias shift tail
+
     # Adds a new element at the end of +self+.
     #
     # @param [Object] x the element to add.
@@ -157,6 +165,7 @@ module Immutable
             Stream.cons(->{x}, ->{@rear}), @rear_len + 1,
             exec1(@rear_schedule))
     end
+
     alias push snoc
 
     # Returns the last element of +self+. If +self+ is empty,
@@ -192,6 +201,8 @@ module Immutable
               @rear.tail, @rear_len - 1, exec2(@rear_schedule))
       end
     end
+
+    alias pop init
 
     # Calls +block+ once for each element in +self+.
     def each(&block)

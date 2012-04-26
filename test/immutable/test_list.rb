@@ -135,6 +135,15 @@ module Immutable
       assert_equal(100, List[*(1..100)].length)
     end
 
+    def test_cons
+      assert_equal(List[1], List[].cons(1))
+      assert_equal(List[1, 2, 3], List[2, 3].cons(1))
+      xs = List[1, 2, 3]
+      ys = xs.cons(0)
+      assert_equal(List[1, 2, 3], xs)
+      assert_equal(List[0, 1, 2, 3], ys)
+    end
+
     def test_plus
       assert_equal(List[], List[] + List[])
       assert_equal(List[1, 2, 3], List[] + List[1, 2, 3])

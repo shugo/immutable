@@ -59,6 +59,17 @@ module Immutable
     def each(&block)
     end
 
+    # Adds a new element at the head of +self+.
+    #
+    # @param [Object] x the element to add.
+    # @return [List] a new list.
+    def cons(x)
+      Cons[x, self]
+    end
+
+    alias unshift cons
+    alias prepend cons
+
     # Appends two lists +self+ and +xs+.
     #
     # @param [List] xs the list to append.
@@ -84,8 +95,7 @@ module Immutable
       # this method should be overriden
     end
 
-    # Returns the first element of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # Same as {#head}.
     #
     # @return [Object] the first element of +self+.
     def first
@@ -108,6 +118,13 @@ module Immutable
       # this method should be overriden
     end
 
+    # Same as {#tail}.
+    #
+    # @return [List] the elements after the head of +self+.
+    def shift
+      tail
+    end
+
     # Returns all the elements of +self+ except the last one.
     # If +self+ is empty, +Immutable::List::EmptyError+ is
     # raised.
@@ -117,6 +134,13 @@ module Immutable
       # this method should be overriden
     end
 
+    # Same as {#init}.
+    #
+    # @return [List] the elements of +self+ except the last one.
+    def pop
+      init
+    end
+
     # Returns whether +self+ is empty.
     #
     # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
@@ -124,7 +148,7 @@ module Immutable
       # this method should be overriden
     end
 
-    # Returns whether +self+ is empty.
+    # Same as {#empty?}.
     #
     # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
     def null?
@@ -239,7 +263,6 @@ module Immutable
     end
 
     alias concat_map flat_map
-
     alias bind flat_map
 
     # Builds a list from the seed value +e+ and the given block. The block

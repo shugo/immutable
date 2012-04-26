@@ -36,6 +36,8 @@ module Immutable
       @front.null?
     end
 
+    alias null? empty?
+
     def rotate(front, rear, accumulator)
       Stream.lazy {
         if front.null?
@@ -67,6 +69,7 @@ module Immutable
     def snoc(x)
       queue(@front, Cons[x, @rear], @schedule)
     end
+
     alias push snoc
 
     # Returns the first element of +self+. If +self+ is empty,
@@ -76,6 +79,8 @@ module Immutable
     def head
       @front.head
     end
+
+    alias first head
 
     # Returns the elements after the head of +self+. If +self+ is empty,
     # +Immutable::List::EmptyError+ is raised.
@@ -88,6 +93,8 @@ module Immutable
         queue(@front.tail, @rear, @schedule)
       end
     end
+
+    alias shift tail
 
     # Calls +block+ once for each element in +self+.
     def each(&block)
