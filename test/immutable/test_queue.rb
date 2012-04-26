@@ -5,7 +5,7 @@ with_tailcall_optimization {
 }
 
 module Immutable
-  class TestList < Test::Unit::TestCase
+  class TestQueue < Test::Unit::TestCase
     def test_head
       assert_raise(List::EmptyError) do
         Queue[].head
