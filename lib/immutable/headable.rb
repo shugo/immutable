@@ -23,11 +23,11 @@ module Immutable
       end
     end
 
-    # Returns whether +self+ equals to +xs+.
+    # Returns whether +self+ equals to +x+.
     #
     # @param [Object] x the object to compare.
-    # @return [true, false] +true+ if +self+ equals to +xs+; otherwise,
-    # +false+.
+    # @return [true, false] +true+ if +self+ equals to +x+; otherwise,
+    #   +false+.
     def ==(x)
       if !x.is_a?(self.class)
         false
