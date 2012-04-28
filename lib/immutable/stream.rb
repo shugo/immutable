@@ -1,4 +1,3 @@
-require "immutable/foldable"
 require "immutable/list"
 require "immutable/promise"
 
@@ -22,8 +21,7 @@ module Immutable
   #   }
   #   p primes.take_while { |n| n < 10 }.to_list #=> List[2, 3, 5, 7]
   class Stream < Promise
-    include Enumerable
-    include Foldable
+    include Headable
 
     NULL = Object.new
 
@@ -215,81 +213,6 @@ module Immutable
     end
     protected :inspect_i
 
-    # Calls +block+ once for each element in +self+.
-    def each(&block)
-      unless null?
-        yield(head)
-        tail.each(&block)
-      end
-    end
-
-    # Reduces +self+ using +block+ from right to left. +e+ is used as the
-    # starting value. For example:
-    #
-    #   Stream[1, 2, 3].foldr(9) { |x, y| x + y } #=> 1 - (2 - (3 - 9)) = -7
-    #
-    # @param [Object] e the start value.
-    # @return [Object] the reduced value.
-    def foldr(e, &block)
-      if null?
-        e
-      else
-        yield(head, tail.foldr(e, &block))
-      end
-    end
-
-    # Reduces +self+ using +block+ from right to left. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
-    #
-    # @return [Object] the reduced value.
-    def foldr1(&block)
-      if tail.null?
-        head
-      else
-        yield(head, tail.foldr1(&block))
-      end
-    end
-
-    # Reduces +self+ using +block+ from left to right. +e+ is used as the
-    # starting value. For example:
-    #
-    #   Stream[1, 2, 3].foldl(9) { |x, y| x + y } #=> ((9 - 1) - 2) - 3 = 3
-    #
-    # @param [Object] e the start value.
-    # @return [Object] the reduced value.
-    def foldl(e, &block)
-      if null?
-        e
-      else
-        tail.foldl(yield(e, head), &block)
-      end
-    end
-
-    # Reduces +self+ using +block+ from left to right. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
-    #
-    # @return [Object] the reduced value.
-    def foldl1(&block)
-      tail.foldl(head, &block)
-    end
-
-    # Returns whether +self+ equals to +s+.
-    #
-    # @param [Stream] s the stream to compare.
-    # @return [true, false] +true+ if +self+ equals to +s+; otherwise,
-    # +false+.
-    def ==(s)
-      if !s.is_a?(Stream)
-        false
-      else
-        if null?
-          s.null?
-        else
-          !s.null? && head == s.head && tail == s.tail
-        end
-      end
-    end
-
     # Appends two streams +self+ and +s+.
     #
     # @param [Stream] s the stream to append.
@@ -383,23 +306,6 @@ module Immutable
       intersperse(xs).flatten
     end
 
-    # Returns the first element in +self+ for which the given block
-    # evaluates to true.  If such an element is not found, it
-    # returns +nil+.
-    #
-    # @return [Object] the found element.
-    def find(&block)
-      if null?
-        nil
-      else
-        if yield(head)
-          head
-        else
-          tail.find(&block)
-        end
-      end
-    end
-
     # Returns the elements in +self+ for which the given block evaluates to
     # true.
     #
@@ -416,20 +322,6 @@ module Immutable
           end
         end
       }
-    end
-
-    # Returns the +n+th element of +self+. If +n+ is out of range, +nil+ is
-    # returned.
-    #
-    # @return [Object] the +n+th element.
-    def [](n)
-      if n < 0 || null?
-        nil
-      elsif n == 0
-        head
-      else
-        tail[n - 1]
-      end
     end
 
     # Returns the first +n+ elements of +self+, or +self+ itself if
@@ -488,13 +380,6 @@ module Immutable
           tail.drop_while(&block)
         end
       }
-    end
-
-    # Converts +self+ to a list.
-    #
-    # @return [List] a list.
-    def to_list
-      foldr(List[]) { |x, xs| Cons[x, xs] }
     end
 
     # Builds a stream from the seed value +e+ and the given block. The block

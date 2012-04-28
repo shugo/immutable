@@ -4,7 +4,7 @@ module Immutable
   # +Immutable::Deque+ is an implementation of real-time deques described in
   # "Purely Functional Data Structures" by Chris Okasaki.
   class Deque
-    include Enumerable
+    include Headable
 
     # +Deque.new+ is for internal use only. Use {Deque.empty} or {Deque.[]}
     # instead.
@@ -148,14 +148,6 @@ module Immutable
     end
 
     alias pop init
-
-    # Calls +block+ once for each element in +self+.
-    def each(&block)
-      unless empty?
-        yield(head)
-        tail.each(&block)
-      end
-    end
 
     private
 

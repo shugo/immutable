@@ -4,7 +4,7 @@ module Immutable
   # +Immutable::Queue+ is an implementation of real-time queues described in
   # "Purely Functional Data Structures" by Chris Okasaki.
   class Queue
-    include Enumerable
+    include Headable
 
     # +Queue.new+ is for internal use only. Use {Queue.empty} or {Queue.[]}
     # instead.
@@ -71,14 +71,6 @@ module Immutable
     end
 
     alias shift tail
-
-    # Calls +block+ once for each element in +self+.
-    def each(&block)
-      unless @front.null?
-        yield(head)
-        tail.each(&block)
-      end
-    end
 
     private
 

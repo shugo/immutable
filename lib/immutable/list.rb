@@ -1,4 +1,4 @@
-require "immutable/foldable"
+require "immutable/headable"
 
 module Immutable
   # +Immutable::List+ represents an immutable list.
@@ -18,14 +18,9 @@ module Immutable
   #   p Nil                    #=> List[]
   #   p Cons[1, Cons[2, Nil]]  #=> List[1, 2]
   class List
-    include Enumerable
-    include Foldable
+    include Headable
 
-    class EmptyError < StandardError
-      def initialize(msg = "list is empty")
-        super(msg)
-      end
-    end
+    EmptyError = Immutable::EmptyError # TODO: remove
 
     # Creates a new list populated with the given objects.
     #
@@ -55,10 +50,6 @@ module Immutable
       }.reverse
     end
 
-    # Calls +block+ once for each element in +self+.
-    def each(&block)
-    end
-
     # Adds a new element at the head of +self+.
     #
     # @param [Object] x the element to add.
@@ -76,15 +67,6 @@ module Immutable
     # @return [List] the new list.
     def +(xs)
       foldr(xs) { |y, ys| Cons[y, ys] }
-    end
-
-    # Returns whether +self+ equals to +xs+.
-    #
-    # @param [List] xs the list to compare.
-    # @return [true, false] +true+ if +self+ equals to +xs+; otherwise,
-    # +false+.
-    def ==(xs)
-      # this method should be overriden
     end
 
     # Returns the first element of +self+. If +self+ is empty,
@@ -207,44 +189,6 @@ module Immutable
       Cons[List[], nonempty_subsequences]
     end
 
-    # Reduces +self+ using +block+ from right to left. +e+ is used as the
-    # starting value. For example:
-    #
-    #   List[1, 2, 3].foldr(9) { |x, y| x + y } #=> 1 - (2 - (3 - 9)) = -7
-    #
-    # @param [Object] e the start value.
-    # @return [Object] the reduced value.
-    def foldr(e, &block)
-      # this method should be overriden
-    end
-
-    # Reduces +self+ using +block+ from right to left. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
-    #
-    # @return [Object] the reduced value.
-    def foldr1(&block)
-      # this method should be overriden
-    end
-
-    # Reduces +self+ using +block+ from left to right. +e+ is used as the
-    # starting value. For example:
-    #
-    #   List[1, 2, 3].foldl(9) { |x, y| x + y } #=> ((9 - 1) - 2) - 3 = 3
-    #
-    # @param [Object] e the start value.
-    # @return [Object] the reduced value.
-    def foldl(e, &block)
-      # this method should be overriden
-    end
-
-    # Reduces +self+ using +block+ from left to right. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
-    #
-    # @return [Object] the reduced value.
-    def foldl1(&block)
-      # this method should be overriden
-    end
-
     # Concatenates a list of lists.
     #
     # @return [List] the concatenated list.
@@ -288,14 +232,6 @@ module Immutable
       end
     end
 
-    # Returns the +n+th element of +self+. If +n+ is out of range, +nil+ is
-    # returned.
-    #
-    # @return [Object] the +n+th element.
-    def [](n)
-      # this method should be overriden
-    end
-
     # Returns the first +n+ elements of +self+, or all the elements of
     # +self+ if +n > self.length+.
     #
@@ -337,15 +273,6 @@ module Immutable
       self
     end
 
-    # Returns the first element in +self+ for which the given block
-    # evaluates to true.  If such an element is not found, it
-    # returns +nil+.
-    #
-    # @return [Object] the found element.
-    def find(&block)
-      # this method should be overriden
-    end
-
     # Returns the elements in +self+ for which the given block evaluates to
     # true.
     #
@@ -380,6 +307,12 @@ module Immutable
     # @return [List] the new list.
     def zip_with(*xss, &block)
       # this method should be overriden
+    end
+
+    private
+
+    def class_name
+      "List"
     end
   end
 
@@ -445,71 +378,6 @@ module Immutable
       false
     end
 
-    def Nil.foldr(e)
-      e
-    end
-
-    def foldr(e, &block)
-      yield(@head, @tail.foldr(e, &block))
-    end
-
-    def Nil.foldr1
-      raise EmptyError
-    end
-
-    def foldr1(&block)
-      if @tail.empty?
-        @head
-      else
-        yield(@head, @tail.foldr1(&block))
-      end
-    end
-
-    def Nil.each
-    end
-
-    def each(&block)
-      yield(@head)
-      @tail.each(&block)
-    end
-
-    def Nil.foldl(e)
-      e
-    end
-
-    def foldl(e, &block)
-      @tail.foldl(yield(e, @head), &block)
-    end
-
-    def Nil.foldl1
-      raise EmptyError
-    end
-
-    def foldl1(&block)
-      @tail.foldl(@head, &block)
-    end
-
-    def Nil.==(xs)
-      equal?(xs)
-    end
-
-    def ==(xs)
-      if !xs.is_a?(List) || xs.empty?
-        false
-      else
-        @head == xs.head && @tail == xs.tail
-      end
-    end
-
-    def Nil.inspect
-      "List[]"
-    end
-
-    def inspect
-      "List[" + @head.inspect +
-        @tail.foldl("") {|x, y| x + ", " + y.inspect } + "]"
-    end
-
     def Nil.intersperse(sep)
       Nil
     end
@@ -549,20 +417,6 @@ module Immutable
         Cons[xs, Cons[Cons[@head, xs], xss]]
       }
       Cons[List[@head], yss]
-    end
-
-    def Nil.[](n)
-      nil
-    end
-
-    def [](n)
-      if n < 0
-        nil
-      elsif n == 0
-        head
-      else
-        tail[n - 1]
-      end
     end
 
     def Nil.take(n)
@@ -610,18 +464,6 @@ module Immutable
         @tail.drop_while(&block)
       else
         self
-      end
-    end
-
-    def Nil.find
-      nil
-    end
-
-    def find(&block)
-      if yield(@head)
-        @head
-      else
-        @tail.find(&block)
       end
     end
 

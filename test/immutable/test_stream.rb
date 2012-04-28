@@ -355,5 +355,10 @@ module Immutable
       }
       assert_equal(Stream[0, 6, 12, 18], s)
     end
+
+    def test_to_list
+      assert_equal(List[], Stream[].to_list)
+      assert_equal(List[1, 2, 3], Stream.from(1).take(3).to_list)
+    end
   end
 end
