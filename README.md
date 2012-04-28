@@ -3,16 +3,6 @@ immutable - immutable data structures for Ruby
 
 This project aims to provide immutable data structures for Ruby.
 
-Currently, immutable provides the following classes and modules:
-
-* Immutable::Foldable
-* Immutable::List
-* Immutable::Map
-* Immutable::Promise
-* Immutable::Stream
-* Immutable::Queue
-* Immutable::Deque
-
 Install
 ========================
 
