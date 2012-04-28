@@ -18,7 +18,7 @@ module Immutable
     end
 
     def test_head
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         List[].head
       end
       assert_equal(1, List[1].head)
@@ -26,7 +26,7 @@ module Immutable
     end
 
     def test_last
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         List[].last
       end
       assert_equal(1, List[1].last)
@@ -34,7 +34,7 @@ module Immutable
     end
 
     def test_tail
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         List[].tail
       end
       assert_equal(List[], List[1].tail)
@@ -42,7 +42,7 @@ module Immutable
     end
 
     def test_init
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         List[].init
       end
       assert_equal(List[], List[1].init)
@@ -75,7 +75,7 @@ module Immutable
     end
 
     def test_foldr1
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         List[].foldr1(&:+)
       end
       assert_equal(1, List[1].foldr1(&:+))
@@ -94,7 +94,7 @@ module Immutable
     end
 
     def test_foldl1
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         List[].foldl1(&:+)
       end
       assert_equal(1, List[1].foldl1(&:+))

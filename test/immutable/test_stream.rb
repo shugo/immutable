@@ -39,7 +39,7 @@ module Immutable
     end
 
     def test_head
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         Stream.null.head
       end
       assert_equal(1, Stream[1].head)
@@ -47,7 +47,7 @@ module Immutable
     end
 
     def test_tail
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         Stream.null.tail
       end
       assert(Stream[1].tail.null?)
@@ -55,7 +55,7 @@ module Immutable
     end
 
     def test_last
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         Stream.null.last
       end
       assert_equal(1, Stream[1].last)
@@ -63,7 +63,7 @@ module Immutable
     end
 
     def test_init
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         Stream.null.init.force
       end
       assert_equal(Stream[], Stream[1].init)
@@ -108,7 +108,7 @@ module Immutable
     end
 
     def test_foldr1
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         Stream[].foldr1(&:+)
       end
       assert_equal(1, Stream[1].foldr1(&:+))
@@ -127,7 +127,7 @@ module Immutable
     end
 
     def test_foldl1
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         Stream[].foldl1(&:+)
       end
       assert_equal(1, Stream[1].foldl1(&:+))

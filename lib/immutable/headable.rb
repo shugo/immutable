@@ -64,7 +64,7 @@ module Immutable
     end
 
     # Reduces +self+ using +block+ from right to left. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Object] the reduced value.
     def foldr1(&block)
@@ -95,7 +95,7 @@ module Immutable
     end
 
     # Reduces +self+ using +block+ from left to right. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Object] the reduced value.
     def foldl1(&block)

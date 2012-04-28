@@ -26,11 +26,11 @@ module Immutable
     NULL = Object.new
 
     def NULL.head
-      raise List::EmptyError
+      raise EmptyError
     end
 
     def NULL.tail
-      raise List::EmptyError
+      raise EmptyError
     end
 
     def NULL.inspect
@@ -137,7 +137,7 @@ module Immutable
     alias empty? null?
 
     # Returns the first element of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Object] the first element of +self+.
     def head
@@ -146,7 +146,7 @@ module Immutable
     alias first head
 
     # Returns the last element of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Object] the last element of +self+.
     def last
@@ -158,7 +158,7 @@ module Immutable
     end
 
     # Returns the stream stored in the tail of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Stream] the stream stored in the tail of +self+.
     def tail
@@ -166,14 +166,14 @@ module Immutable
     end
 
     # Returns all the elements of +self+ except the last one.
-    # If +self+ is empty, +Immutable::List::EmptyError+ is
+    # If +self+ is empty, +Immutable::EmptyError+ is
     # raised.
     #
     # @return [Stream] the elements of +self+ except the last one.
     def init
       Stream.lazy {
         if null?
-          raise List::EmptyError
+          raise EmptyError
         else
           if tail.null?
             Stream.null

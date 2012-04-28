@@ -65,13 +65,13 @@ module Immutable
     alias prepend cons
 
     # Returns the first element of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Object] the first element of +self+.
     def head
       if @front.null?
         if @rear.null?
-          raise List::EmptyError
+          raise EmptyError
         else
           @rear.head
         end
@@ -83,13 +83,13 @@ module Immutable
     alias first head
 
     # Returns the elements after the head of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Deque] the elements after the head of +self+.
     def tail
       if @front.null?
         if @rear.null?
-          raise List::EmptyError
+          raise EmptyError
         else
           self.class.empty
         end
@@ -114,13 +114,13 @@ module Immutable
     alias push snoc
 
     # Returns the last element of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Object] the last element of +self+.
     def last
       if @rear.null?
         if @front.null?
-          raise List::EmptyError
+          raise EmptyError
         else
           @front.head
         end
@@ -130,14 +130,14 @@ module Immutable
     end
 
     # Returns all the elements of +self+ except the last one.
-    # If +self+ is empty, +Immutable::List::EmptyError+ is
+    # If +self+ is empty, +Immutable::EmptyError+ is
     # raised.
     #
     # @return [Deque] the elements of +self+ except the last one.
     def init
       if @rear.null?
         if @front.null?
-          raise List::EmptyError
+          raise EmptyError
         else
           self.class.empty
         end

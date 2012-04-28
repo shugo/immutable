@@ -20,8 +20,6 @@ module Immutable
   class List
     include Headable
 
-    EmptyError = Immutable::EmptyError # TODO: remove
-
     # Creates a new list populated with the given objects.
     #
     # @param [Array<Object>] elements the elements of the list.
@@ -70,7 +68,7 @@ module Immutable
     end
 
     # Returns the first element of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Object] the first element of +self+.
     def head
@@ -85,7 +83,7 @@ module Immutable
     end
 
     # Returns the last element of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Object] the last element of +self+.
     def last
@@ -93,7 +91,7 @@ module Immutable
     end
 
     # Returns the elements after the head of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [List] the elements after the head of +self+.
     def tail
@@ -108,7 +106,7 @@ module Immutable
     end
 
     # Returns all the elements of +self+ except the last one.
-    # If +self+ is empty, +Immutable::List::EmptyError+ is
+    # If +self+ is empty, +Immutable::EmptyError+ is
     # raised.
     #
     # @return [List] the elements of +self+ except the last one.

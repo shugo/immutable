@@ -49,7 +49,7 @@ module Immutable
     alias push snoc
 
     # Returns the first element of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Object] the first element of +self+.
     def head
@@ -59,12 +59,12 @@ module Immutable
     alias first head
 
     # Returns the elements after the head of +self+. If +self+ is empty,
-    # +Immutable::List::EmptyError+ is raised.
+    # +Immutable::EmptyError+ is raised.
     #
     # @return [Queue] the elements after the head of +self+.
     def tail
       if @front.null?
-        raise List::EmptyError
+        raise EmptyError
       else
         queue(@front.tail, @rear, @schedule)
       end

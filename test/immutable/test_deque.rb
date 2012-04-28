@@ -7,7 +7,7 @@ with_tailcall_optimization {
 module Immutable
   class TestDeque < Test::Unit::TestCase
     def test_head
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         Deque[].head
       end
       assert_equal(1, Deque[1].head)
@@ -15,7 +15,7 @@ module Immutable
     end
 
     def test_last
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         Deque[].last
       end
       assert_equal(1, Deque[1].last)
@@ -23,7 +23,7 @@ module Immutable
     end
 
     def test_tail
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         Deque[].tail
       end
       assert(Deque[1].tail.empty?)
@@ -33,7 +33,7 @@ module Immutable
     end
 
     def test_init
-      assert_raise(List::EmptyError) do
+      assert_raise(EmptyError) do
         Deque[].init
       end
       assert(Deque[1].init.empty?)
