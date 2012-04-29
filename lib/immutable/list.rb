@@ -82,15 +82,6 @@ module Immutable
       # this method should be overriden
     end
 
-    # Concatenates a list of lists.
-    #
-    # @return [List] the concatenated list.
-    def flatten
-      foldr(Nil) { |x, xs| x + xs }
-    end
-
-    alias concat flatten
-
     # Returns the list obtained by concatenating the results of the given
     # block for each element in +self+.
     #

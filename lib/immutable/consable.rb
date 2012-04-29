@@ -142,6 +142,15 @@ module Immutable
       Cons(empty, nonempty_subsequences)
     end
 
+    # Concatenates a +Consable+ object of +Consable+ objects.
+    #
+    # @return [Consable] the concatenated +Consable+ object.
+    def flatten
+      foldr(empty) { |x, xs| x + xs }
+    end
+
+    alias concat flatten
+
     protected
 
     def prepend_to_all(sep)
