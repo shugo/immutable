@@ -1,10 +1,11 @@
 require "immutable/stream"
+require "immutable/consable"
 
 module Immutable
   # +Immutable::Deque+ is an implementation of real-time deques described in
   # "Purely Functional Data Structures" by Chris Okasaki.
   class Deque
-    include Headable
+    include Consable
 
     # +Deque.new+ is for internal use only. Use {Deque.empty} or {Deque.[]}
     # instead.
@@ -58,9 +59,6 @@ module Immutable
             exec1(@front_schedule),
             @rear, @rear_len, exec1(@rear_schedule))
     end
-
-    alias unshift cons
-    alias prepend cons
 
     # Returns the first element of +self+. If +self+ is empty,
     # +Immutable::EmptyError+ is raised.

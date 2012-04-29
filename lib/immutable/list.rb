@@ -1,4 +1,4 @@
-require "immutable/headable"
+require "immutable/consable"
 
 module Immutable
   # +Immutable::List+ represents an immutable list.
@@ -18,7 +18,14 @@ module Immutable
   #   p Nil                    #=> List[]
   #   p Cons[1, Cons[2, Nil]]  #=> List[1, 2]
   class List
-    include Headable
+    include Consable
+
+    # Returns an empty list.
+    #
+    # @return [list] the empty list.
+    def self.empty
+      Nil
+    end
 
     # Creates a new list populated with the given objects.
     #
@@ -54,17 +61,6 @@ module Immutable
     # @return [List] a new list.
     def cons(x)
       Cons[x, self]
-    end
-
-    alias unshift cons
-    alias prepend cons
-
-    # Appends two lists +self+ and +xs+.
-    #
-    # @param [List] xs the list to append.
-    # @return [List] the new list.
-    def +(xs)
-      foldr(xs) { |y, ys| Cons[y, ys] }
     end
 
     # Returns the first element of +self+. If +self+ is empty,
@@ -112,41 +108,6 @@ module Immutable
     # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
     def empty?
       # this method should be overriden
-    end
-
-    # Returns the list obtained by applying the given block to each element
-    # in +self+.
-    #
-    # @return [List] the obtained list.
-    def map
-      foldr(Nil) { |x, xs| Cons[yield(x), xs] }
-    end
-
-    # Returns the elements of +self+ in reverse order.
-    #
-    # @return [List] the reversed list.
-    def reverse
-      foldl(Nil) { |x, y| Cons[y, x] }
-    end
-
-    # Returns a new list obtained by inserting +sep+ in between the elements
-    # of +self+.
-    #
-    # @param [Object] sep the object to insert between elements.
-    # @return [List] the new list.
-    def intersperse(sep)
-      # this method should be overriden
-    end
-
-    # Returns a new list obtained by inserting +xs+ in between the lists in
-    # +self+ and concatenates the result.
-    # +xss.intercalate(xs)+ is equivalent to
-    # +xss.intersperse(xs).flatten+.
-    #
-    # @param [List] xs the list to insert between lists.
-    # @return [List] the new list.
-    def intercalate(xs)
-      intersperse(xs).flatten
     end
 
     # Transposes the rows and columns of +self+. For example:
@@ -353,22 +314,6 @@ module Immutable
 
     def empty?
       false
-    end
-
-    def Nil.intersperse(sep)
-      Nil
-    end
-
-    def intersperse(sep)
-      Cons[@head, @tail.prepend_to_all(sep)]
-    end
-
-    def Nil.prepend_to_all(sep)
-      Nil
-    end
-
-    def prepend_to_all(sep)
-      Cons[sep, Cons[@head, @tail.prepend_to_all(sep)]]
     end
 
     def Nil.transpose
