@@ -18,7 +18,7 @@ module Immutable
     #
     # @return [Queue] the empty queue.
     def self.empty
-      new(Stream.null, Nil, Stream.null)
+      new(Stream.empty, Nil, Stream.empty)
     end
 
     # Creates a new queue populated with the given objects.
@@ -83,7 +83,7 @@ module Immutable
 
     def queue(front, rear, schedule)
       if schedule.empty?
-        f = rotate(front, rear, Stream.null)
+        f = rotate(front, rear, Stream.empty)
         self.class.new(f, Nil, f)
       else
         self.class.new(front, rear, schedule.tail)

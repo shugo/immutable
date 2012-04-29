@@ -34,13 +34,13 @@ module Immutable
     end
 
     def test_prepend
-      assert_equal(Stream[1], Stream.null.prepend { 1 })
-      assert_equal(Stream[1, 2], Stream.null.prepend { 2 }.prepend { 1 })
+      assert_equal(Stream[1], Stream.empty.prepend { 1 })
+      assert_equal(Stream[1, 2], Stream.empty.prepend { 2 }.prepend { 1 })
     end
 
     def test_head
       assert_raise(EmptyError) do
-        Stream.null.head
+        Stream.empty.head
       end
       assert_equal(1, Stream[1].head)
       assert_equal(1, Stream[1, 2, 3].head)
@@ -48,15 +48,15 @@ module Immutable
 
     def test_tail
       assert_raise(EmptyError) do
-        Stream.null.tail
+        Stream.empty.tail
       end
-      assert(Stream[1].tail.null?)
+      assert(Stream[1].tail.empty?)
       assert_equal([2, 3], Stream[1, 2, 3].tail.to_a)
     end
 
     def test_last
       assert_raise(EmptyError) do
-        Stream.null.last
+        Stream.empty.last
       end
       assert_equal(1, Stream[1].last)
       assert_equal(3, Stream[1, 2, 3].last)
@@ -64,7 +64,7 @@ module Immutable
 
     def test_init
       assert_raise(EmptyError) do
-        Stream.null.init.force
+        Stream.empty.init.force
       end
       assert_equal(Stream[], Stream[1].init)
       assert_equal(Stream[1], Stream[1, 2].init)

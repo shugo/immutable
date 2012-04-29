@@ -49,18 +49,18 @@ module Immutable
     # Returns an empty stream.
     #
     # @return [Stream] an empty stream.
-    def self.null
+    def self.empty
       delay { NULL }
     end
 
     # Creates a new stream.
     #
     # @example A Stream which has 123 as the only element.
-    #   s = Stream.cons(->{123}, ->{Stream.null})
+    #   s = Stream.cons(->{123}, ->{Stream.empty})
     #   p s.to_list #=> List[123]
     # @example A Stream which has two elements: "abc" and "def".
     #   s = Stream.cons(->{"abc"},
-    #         ->{Stream.cons(->{"def"}, ->{Stream.null})})
+    #         ->{Stream.cons(->{"def"}, ->{Stream.empty})})
     #   p s.to_list #=> List["abc", "def"]
     #
     # @param [Proc] head a +Proc+ whose value is the head of +self+.
@@ -74,10 +74,10 @@ module Immutable
     # is +self+.
     #
     # @example A Stream which has 123 as the only element.
-    #   s = Stream.null.prepend {123}
+    #   s = Stream.empty.prepend {123}
     #   p s.to_list #=> List[123]
     # @example A Stream which has two elements: "abc" and "def".
-    #   s = Stream.null.prepend {"def"}.prepend {"abc"}
+    #   s = Stream.empty.prepend {"def"}.prepend {"abc"}
     #   p s.to_list #=> List["abc", "def"]
     #
     # @return [Stream] the new stream.
@@ -113,7 +113,7 @@ module Immutable
           x = e.next
           cons ->{ x }, ->{ from_enumerator(e) }
         rescue StopIteration
-          null
+          empty
         end
       }
     end
@@ -174,7 +174,7 @@ module Immutable
           raise EmptyError
         else
           if tail.empty?
-            Stream.null
+            Stream.empty
           else
             Stream.cons(->{head}, ->{tail.init})
           end
@@ -251,7 +251,7 @@ module Immutable
     def map(&block)
       Stream.lazy {
         if empty?
-          Stream.null
+          Stream.empty
         else
           Stream.cons ->{ yield(head) }, ->{ tail.map(&block) }
         end
@@ -262,7 +262,7 @@ module Immutable
     #
     # @return [Stream] the reversed stream.
     def reverse
-      foldl(Stream.null) { |x, y| Stream.cons(->{y}, ->{x}) }
+      foldl(Stream.empty) { |x, y| Stream.cons(->{y}, ->{x}) }
     end
 
     # Returns a new stream obtained by inserting +sep+ in between the
@@ -311,7 +311,7 @@ module Immutable
     def filter(&block)
       Stream.lazy {
         if empty?
-          Stream.null
+          Stream.empty
         else
           if yield(head)
             Stream.cons ->{ head }, ->{ tail.filter(&block) }
@@ -330,7 +330,7 @@ module Immutable
     def take(n)
       Stream.lazy {
         if n <= 0 || empty?
-          Stream.null
+          Stream.empty
         else
           Stream.cons ->{ head }, ->{ tail.take(n - 1) }
         end
@@ -359,7 +359,7 @@ module Immutable
     def take_while(&block)
       Stream.lazy {
         if empty? || !yield(head)
-          Stream.null
+          Stream.empty
         else
           Stream.cons ->{ head }, ->{ tail.take_while(&block) }
         end
@@ -397,7 +397,7 @@ module Immutable
       Stream.lazy {
         x = yield(e)
         if x.nil?
-          Stream.null
+          Stream.empty
         else
           y, z = x
           Stream.cons ->{ y }, ->{ unfoldr(z, &block) }
@@ -417,7 +417,7 @@ module Immutable
           self
         else
           heads = xss.map { |xs| xs.empty? ? nil : xs.head }
-          tails = xss.map { |xs| xs.empty? ? Stream.null : xs.tail }
+          tails = xss.map { |xs| xs.empty? ? Stream.empty : xs.tail }
           Stream.cons ->{ [head, *heads] }, ->{ tail.zip(*tails) }
         end
       }
@@ -437,7 +437,7 @@ module Immutable
           self
         else
           heads = xss.map { |xs| xs.empty? ? nil : xs.head }
-          tails = xss.map { |xs| xs.empty? ? Stream.null : xs.tail }
+          tails = xss.map { |xs| xs.empty? ? Stream.empty : xs.tail }
           h = yield(head, *heads)
           Stream.cons ->{ h }, ->{ tail.zip_with(*tails, &block) }
         end

@@ -23,8 +23,8 @@ module Immutable
     #
     # @return [Deque] the empty deque.
     def self.empty
-      Deque.new(Stream.null, 0, Stream.null,
-                Stream.null, 0, Stream.null)
+      Deque.new(Stream.empty, 0, Stream.empty,
+                Stream.empty, 0, Stream.empty)
     end
 
     # Creates a new deque populated with the given objects.
@@ -169,7 +169,7 @@ module Immutable
 
     def rotate_drop(r, i, f)
       if i < @c
-        rotate_rev(r, f.drop(i), Stream.null)
+        rotate_rev(r, f.drop(i), Stream.empty)
       else
         x = r.head
         r2 = r.tail
