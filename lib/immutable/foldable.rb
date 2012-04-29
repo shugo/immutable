@@ -1,5 +1,15 @@
 module Immutable
   module Foldable
+    # Reduces +self+ using +block+ from left to right. +e+ is used as the
+    # starting value. A class including +Immutable::Foldable+ must implement
+    # this method.
+    #
+    # @param [Object] e the start value.
+    # @return [Object] the reduced value.
+    def foldl(e, &block)
+      raise NotImplementedError
+    end
+
     # Returns the number of elements in +self+. May be zero.
     #
     # @return [Integer] the number of elements in +self+.
