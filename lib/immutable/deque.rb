@@ -42,8 +42,6 @@ module Immutable
       length == 0
     end
 
-    alias null? empty?
-
     # Returns the number of elements in +self+. May be zero.
     #
     # @return [Integer] the number of elements in +self+.
@@ -69,8 +67,8 @@ module Immutable
     #
     # @return [Object] the first element of +self+.
     def head
-      if @front.null?
-        if @rear.null?
+      if @front.empty?
+        if @rear.empty?
           raise EmptyError
         else
           @rear.head
@@ -80,15 +78,13 @@ module Immutable
       end
     end
 
-    alias first head
-
     # Returns the elements after the head of +self+. If +self+ is empty,
     # +Immutable::EmptyError+ is raised.
     #
     # @return [Deque] the elements after the head of +self+.
     def tail
-      if @front.null?
-        if @rear.null?
+      if @front.empty?
+        if @rear.empty?
           raise EmptyError
         else
           self.class.empty
@@ -98,8 +94,6 @@ module Immutable
               @rear, @rear_len, exec2(@rear_schedule))
       end
     end
-
-    alias shift tail
 
     # Adds a new element at the end of +self+.
     #
@@ -118,8 +112,8 @@ module Immutable
     #
     # @return [Object] the last element of +self+.
     def last
-      if @rear.null?
-        if @front.null?
+      if @rear.empty?
+        if @front.empty?
           raise EmptyError
         else
           @front.head
@@ -135,8 +129,8 @@ module Immutable
     #
     # @return [Deque] the elements of +self+ except the last one.
     def init
-      if @rear.null?
-        if @front.null?
+      if @rear.empty?
+        if @front.empty?
           raise EmptyError
         else
           self.class.empty
@@ -152,7 +146,7 @@ module Immutable
     private
 
     def exec1(s)
-      if s.null?
+      if s.empty?
         s
       else
         s.tail
@@ -164,7 +158,7 @@ module Immutable
     end
 
     def rotate_rev(r, f, a)
-      if r.null?
+      if r.empty?
         f.reverse + a
       else
         Stream.cons(->{r.head},

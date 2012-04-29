@@ -131,10 +131,9 @@ module Immutable
     # Returns whether +self+ is empty.
     #
     # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
-    def null?
+    def empty?
       force == NULL
     end
-    alias empty? null?
 
     # Returns the first element of +self+. If +self+ is empty,
     # +Immutable::EmptyError+ is raised.
@@ -143,14 +142,13 @@ module Immutable
     def head
       force.head.force
     end
-    alias first head
 
     # Returns the last element of +self+. If +self+ is empty,
     # +Immutable::EmptyError+ is raised.
     #
     # @return [Object] the last element of +self+.
     def last
-      if tail.null?
+      if tail.empty?
         head
       else
         tail.last
@@ -172,10 +170,10 @@ module Immutable
     # @return [Stream] the elements of +self+ except the last one.
     def init
       Stream.lazy {
-        if null?
+        if empty?
           raise EmptyError
         else
-          if tail.null?
+          if tail.empty?
             Stream.null
           else
             Stream.cons(->{head}, ->{tail.init})
@@ -193,7 +191,7 @@ module Immutable
 
     def inspect_i(s = nil)
       if eager?
-        if null?
+        if empty?
           s || ""
         else
           h = force.head.eager? ? head.inspect : "?"
@@ -219,7 +217,7 @@ module Immutable
     # @return [Stream] the new stream.
     def +(s)
       Stream.lazy {
-        if null?
+        if empty?
           s
         else
           Stream.cons ->{head}, ->{tail + s}
@@ -232,10 +230,10 @@ module Immutable
     # @return [Stream] the concatenated stream.
     def flatten
       Stream.lazy {
-        if null?
+        if empty?
           self
         else
-          if head.null?
+          if head.empty?
             tail.flatten
           else
             Stream.cons ->{head.head}, ->{
@@ -252,7 +250,7 @@ module Immutable
     # @return [Stream] the obtained stream.
     def map(&block)
       Stream.lazy {
-        if null?
+        if empty?
           Stream.null
         else
           Stream.cons ->{ yield(head) }, ->{ tail.map(&block) }
@@ -274,7 +272,7 @@ module Immutable
     # @return [Stream] the new stream.
     def intersperse(sep)
       Stream.lazy {
-        if null?
+        if empty?
           self
         else
           Stream.cons(->{head}, ->{tail.prepend_to_all(sep)})
@@ -284,7 +282,7 @@ module Immutable
 
     def prepend_to_all(sep)
       Stream.lazy {
-        if null?
+        if empty?
           self
         else
           Stream.cons ->{sep}, ->{
@@ -312,7 +310,7 @@ module Immutable
     # @return [Stream] the elements that satisfies the condition.
     def filter(&block)
       Stream.lazy {
-        if null?
+        if empty?
           Stream.null
         else
           if yield(head)
@@ -331,7 +329,7 @@ module Immutable
     # @return [Stream] the first +n+ elements of +self+.
     def take(n)
       Stream.lazy {
-        if n <= 0 || null?
+        if n <= 0 || empty?
           Stream.null
         else
           Stream.cons ->{ head }, ->{ tail.take(n - 1) }
@@ -346,7 +344,7 @@ module Immutable
     # @return [Stream] the suffix of +self+ after the first +n+ elements.
     def drop(n)
       Stream.lazy {
-        if n <= 0 || null?
+        if n <= 0 || empty?
           self
         else
           tail.drop(n - 1)
@@ -360,7 +358,7 @@ module Immutable
     # @return [Stream] the prefix of the elements of +self+.
     def take_while(&block)
       Stream.lazy {
-        if null? || !yield(head)
+        if empty? || !yield(head)
           Stream.null
         else
           Stream.cons ->{ head }, ->{ tail.take_while(&block) }
@@ -374,7 +372,7 @@ module Immutable
     # @return [Stream] the suffix of the elements of +self+.
     def drop_while(&block)
       Stream.lazy {
-        if null? || !yield(head)
+        if empty? || !yield(head)
           self
         else
           tail.drop_while(&block)
@@ -415,11 +413,11 @@ module Immutable
     # @return [Stream] the new stream.
     def zip(*xss)
       Stream.lazy {
-        if null?
+        if empty?
           self
         else
-          heads = xss.map { |xs| xs.null? ? nil : xs.head }
-          tails = xss.map { |xs| xs.null? ? Stream.null : xs.tail }
+          heads = xss.map { |xs| xs.empty? ? nil : xs.head }
+          tails = xss.map { |xs| xs.empty? ? Stream.null : xs.tail }
           Stream.cons ->{ [head, *heads] }, ->{ tail.zip(*tails) }
         end
       }
@@ -435,11 +433,11 @@ module Immutable
     # @return [Stream] the new stream.
     def zip_with(*xss, &block)
       Stream.lazy {
-        if null?
+        if empty?
           self
         else
-          heads = xss.map { |xs| xs.null? ? nil : xs.head }
-          tails = xss.map { |xs| xs.null? ? Stream.null : xs.tail }
+          heads = xss.map { |xs| xs.empty? ? nil : xs.head }
+          tails = xss.map { |xs| xs.empty? ? Stream.null : xs.tail }
           h = yield(head, *heads)
           Stream.cons ->{ h }, ->{ tail.zip_with(*tails, &block) }
         end

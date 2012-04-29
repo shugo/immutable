@@ -33,10 +33,8 @@ module Immutable
     #
     # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
     def empty?
-      @front.null?
+      @front.empty?
     end
-
-    alias null? empty?
 
     # Adds a new element at the end of +self+.
     #
@@ -56,27 +54,23 @@ module Immutable
       @front.head
     end
 
-    alias first head
-
     # Returns the elements after the head of +self+. If +self+ is empty,
     # +Immutable::EmptyError+ is raised.
     #
     # @return [Queue] the elements after the head of +self+.
     def tail
-      if @front.null?
+      if @front.empty?
         raise EmptyError
       else
         queue(@front.tail, @rear, @schedule)
       end
     end
 
-    alias shift tail
-
     private
 
     def rotate(front, rear, accumulator)
       Stream.lazy {
-        if front.null?
+        if front.empty?
           Stream.cons(->{rear.head}, ->{accumulator})
         else
           Stream.cons(->{front.head}, ->{
@@ -88,7 +82,7 @@ module Immutable
     end
 
     def queue(front, rear, schedule)
-      if schedule.null?
+      if schedule.empty?
         f = rotate(front, rear, Stream.null)
         self.class.new(f, Nil, f)
       else

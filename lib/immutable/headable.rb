@@ -11,6 +11,53 @@ module Immutable
     include Enumerable
     include Foldable
 
+    # Returns the first element of +self+. If +self+ is empty,
+    # +Immutable::EmptyError+ is raised. A class including
+    # +Immutable::Headable+ must implement this method.
+    #
+    # @return [Object] the first element of +self+.
+    def head
+      raise NotImplementedError
+    end
+
+    # Same as {#head}. This method just calls {#head}.
+    #
+    # @return [Object] the first element of +self+.
+    def first
+      head
+    end
+
+    # Returns the elements after the head of +self+. If +self+ is empty,
+    # +Immutable::EmptyError+ is raised. A class including
+    # +Immutable::Headable+ must implement this method.
+    #
+    # @return [Headable] the elements after the head of +self+.
+    def tail
+      raise NotImplementedError
+    end
+
+    # Same as {#tail}. This method just calls {#tail}.
+    #
+    # @return [Headable] the elements after the head of +self+.
+    def shift
+      tail
+    end
+
+    # Returns whether +self+ is empty. A class including
+    # +Immutable::Headable+ must implement this method.
+    #
+    # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
+    def empty?
+      raise NotImplementedError
+    end
+
+    # Same as {#empty?}. This method just calls {#empty?}.
+    #
+    # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
+    def null?
+      empty?
+    end
+
     # Returns a string containing a human-readable representation of +self+.
     # 
     # @return [String] a string representation of +self+.

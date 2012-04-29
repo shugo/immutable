@@ -75,13 +75,6 @@ module Immutable
       # this method should be overriden
     end
 
-    # Same as {#head}.
-    #
-    # @return [Object] the first element of +self+.
-    def first
-      head
-    end
-
     # Returns the last element of +self+. If +self+ is empty,
     # +Immutable::EmptyError+ is raised.
     #
@@ -96,13 +89,6 @@ module Immutable
     # @return [List] the elements after the head of +self+.
     def tail
       # this method should be overriden
-    end
-
-    # Same as {#tail}.
-    #
-    # @return [List] the elements after the head of +self+.
-    def shift
-      tail
     end
 
     # Returns all the elements of +self+ except the last one.
@@ -126,13 +112,6 @@ module Immutable
     # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
     def empty?
       # this method should be overriden
-    end
-
-    # Same as {#empty?}.
-    #
-    # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
-    def null?
-      empty?
     end
 
     # Returns the list obtained by applying the given block to each element
