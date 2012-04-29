@@ -21,7 +21,7 @@ module Immutable
   #   }
   #   p primes.take_while { |n| n < 10 }.to_list #=> List[2, 3, 5, 7]
   class Stream < Promise
-    include Headable
+    include Consable
 
     NULL = Object.new
 
@@ -70,19 +70,23 @@ module Immutable
       Stream.eager(Pair.new(Stream.delay(&head), Stream.lazy(&tail)))
     end
 
-    # Creates a new stream whose head is the value of +block+ and whose tail
-    # is +self+.
+    # Creates a new stream whose head is the value of +x+ or +block+ and
+    # whose tail is +self+.
     #
     # @example A Stream which has 123 as the only element.
-    #   s = Stream.empty.prepend {123}
+    #   s = Stream.empty.cons(123)
     #   p s.to_list #=> List[123]
     # @example A Stream which has two elements: "abc" and "def".
-    #   s = Stream.empty.prepend {"def"}.prepend {"abc"}
+    #   s = Stream.empty.cons {"def"}.cons {"abc"}
     #   p s.to_list #=> List["abc", "def"]
     #
     # @return [Stream] the new stream.
-    def prepend(&block)
-      Stream.eager(Pair.new(Stream.delay(&block), self))
+    def cons(x = nil, &block)
+      if block
+        Stream.eager(Pair.new(Stream.delay(&block), self))
+      else
+        Stream.eager(Pair.new(Stream.eager(x), self))
+      end
     end
 
     # Creates a new stream. Note that the arguments are evaluated eagerly.

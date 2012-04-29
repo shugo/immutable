@@ -33,9 +33,11 @@ module Immutable
       assert_equal(Stream[1, 3, 5], Stream.from(1, 2).take(3))
     end
 
-    def test_prepend
-      assert_equal(Stream[1], Stream.empty.prepend { 1 })
-      assert_equal(Stream[1, 2], Stream.empty.prepend { 2 }.prepend { 1 })
+    def test_cons
+      assert_equal(Stream[1], Stream.empty.cons(1))
+      assert_equal(Stream[1, 2], Stream.empty.cons(2).cons(1))
+      assert_equal(Stream[1], Stream.empty.cons { 1 })
+      assert_equal(Stream[1, 2], Stream.empty.cons { 2 }.cons { 1 })
     end
 
     def test_head
