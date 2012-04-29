@@ -82,13 +82,6 @@ module Immutable
       # this method should be overriden
     end
 
-    # Returns the list of all subsequences of +self+.
-    #
-    # @return [List<List>] the list of subsequences.
-    def subsequences
-      Cons[List[], nonempty_subsequences]
-    end
-
     # Concatenates a list of lists.
     #
     # @return [List] the concatenated list.
@@ -276,17 +269,6 @@ module Immutable
 
     def empty?
       false
-    end
-
-    def Nil.nonempty_subsequences
-      List[]
-    end
-
-    def nonempty_subsequences
-      yss = @tail.nonempty_subsequences.foldr(List[]) { |xs, xss|
-        Cons[xs, Cons[Cons[@head, xs], xss]]
-      }
-      Cons[List[@head], yss]
     end
 
     def Nil.take(n)

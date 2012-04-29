@@ -135,6 +135,13 @@ module Immutable
       end
     end
 
+    # Returns the +Consable+ object of all subsequences of +self+.
+    #
+    # @return [Consable<Consable>] the subsequences of +self+.
+    def subsequences
+      Cons(empty, nonempty_subsequences)
+    end
+
     protected
 
     def prepend_to_all(sep)
@@ -142,6 +149,17 @@ module Immutable
         empty
       else
         Cons(sep, Cons(head, tail.prepend_to_all(sep)))
+      end
+    end
+
+    def nonempty_subsequences
+      if empty?
+        empty
+      else
+        yss = tail.nonempty_subsequences.foldr(empty) { |xs, xss|
+          Cons(xs, Cons(Cons(head, xs), xss))
+        }
+        Cons(Cons(head, empty), yss)
       end
     end
  
