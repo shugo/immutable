@@ -5,6 +5,8 @@ module Immutable
   # output-restricted deques described in "Purely Functional Data
   # Structures" by Chris Okasaki.
   class OutputRestrictedDeque < Queue
+    include Consable
+
     # Adds a new element at the head of +self+.
     #
     # @param [Object] x the element to add.
