@@ -268,12 +268,12 @@ module Immutable
       }
     end
 
-    # Takes zero or more lists and returns a new list in which each element
-    # is an array of the corresponding elements of +self+ and the input
-    # lists.
+    # Takes zero or more lists and returns a new +Consable+ object in which
+    # each element is an array of the corresponding elements of +self+ and
+    # the input +Consable+ objects.
     #
-    # @param [Array<List>] xss the input lists.
-    # @return [List] the new list.
+    # @param [Array<Consable>] xss the input +Consable+ objects.
+    # @return [Consable] the new +Consable+ object.
     def zip(*xss)
       if empty?
         empty
@@ -284,14 +284,14 @@ module Immutable
       end
     end
 
-    # Takes zero or more lists and returns the list obtained by applying the
-    # given block to an array of the corresponding elements of +self+ and
-    # the input lists.
+    # Takes zero or more +Consable+ objects and returns the +Consable+
+    # object obtained by applying the given block to an array of the
+    # corresponding elements of +self+ and the input +Consable+ objects.
     # +xs.zip_with(*yss, &block)+ is equivalent to
     # +xs.zip(*yss).map(&block)+.
     #
-    # @param [Array<List>] xss the input lists.
-    # @return [List] the new list.
+    # @param [Array<Consable>] xss the input +Consable+ objects.
+    # @return [Consable] the new +Consable+ object.
     def zip_with(*xss, &block)
       if empty?
         empty
