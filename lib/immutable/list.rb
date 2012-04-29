@@ -27,34 +27,6 @@ module Immutable
       Nil
     end
 
-    # Creates a new list populated with the given objects.
-    #
-    # @param [Array<Object>] elements the elements of the list.
-    # @return [List] the new list.
-    def self.[](*elements)
-      from_array(elements)
-    end
-
-    # Converts the given array to a list.
-    #
-    # @param [Array, #reverse_each] ary the array to convert.
-    # @return [List] the list converted from +ary+.
-    def self.from_array(ary)
-      ary.reverse_each.inject(Nil) { |x, y|
-        Cons.new(y, x)
-      }
-    end
-
-    # Converts the given Enumerable object to a list.
-    #
-    # @param [#inject] enum the Enumerable object to convert.
-    # @return [List] the list converted from +enum+.
-    def self.from_enum(enum)
-      enum.inject(Nil) { |x, y|
-        Cons.new(y, x)
-      }.reverse
-    end
-
     # Adds a new element at the head of +self+.
     #
     # @param [Object] x the element to add.
@@ -107,16 +79,6 @@ module Immutable
     #
     # @return [true, false] +true+ if +self+ is empty; otherwise, +false+.
     def empty?
-      # this method should be overriden
-    end
-
-    # Transposes the rows and columns of +self+. For example:
-    # 
-    #   p List[List[1, 2, 3], List[4, 5, 6]].transpose
-    #   #=> List[List[1, 4], List[2, 5], List[3, 6]]
-    #
-    # @return [List] the transposed list.
-    def transpose
       # this method should be overriden
     end
 
@@ -314,20 +276,6 @@ module Immutable
 
     def empty?
       false
-    end
-
-    def Nil.transpose
-      Nil
-    end
-
-    def transpose
-      if @head == Nil
-        @tail.transpose
-      else
-        tail = @tail.filter { |x| !x.empty? }
-        Cons[Cons[@head.head, tail.map(&:head)],
-          Cons[@head.tail, tail.map(&:tail)].transpose]
-      end
     end
 
     def Nil.nonempty_subsequences

@@ -4,6 +4,46 @@ module Immutable
   module Consable
     include Headable
 
+    module ClassMethods
+      # Creates a new +Consable+ object populated with the given objects.
+      #
+      # @param [Array<Object>] elements the elements of the list.
+      # @return [Consable] the new +Consable+ object.
+      def [](*elements)
+        from_array(elements)
+      end
+
+      # Converts the given array to a +Consable+ object.
+      #
+      # @param [Array, #reverse_each] ary the array to convert.
+      # @return [Consable] the +Consable+ object converted from +ary+.
+      def from_array(ary)
+        ary.reverse_each.inject(empty) { |x, y|
+          Cons(y, x)
+        }
+      end
+
+      # Converts the given Enumerable object to a +Consable+ object.
+      #
+      # @param [#inject] enum the Enumerable object to convert.
+      # @return [Cons] the +Consable+ object converted from +enum+.
+      def from_enum(enum)
+        enum.inject(empty) { |x, y|
+          Cons(y, x)
+        }.reverse
+      end
+
+      private
+
+      def Cons(x, y)
+        y.cons(x)
+      end
+    end
+
+    def self.included(c)
+      c.extend(ClassMethods)
+    end
+
     # Adds a new element at the head of +self+. A class including
     # +Immutable::Consable+ must implement this method.
     #
@@ -73,6 +113,26 @@ module Immutable
     # @return [Consable] the new +Consable+ object.
     def intercalate(xs)
       intersperse(xs).flatten
+    end
+
+    # Transposes the rows and columns of +self+. For example:
+    # 
+    #   p List[List[1, 2, 3], List[4, 5, 6]].transpose
+    #   #=> List[List[1, 4], List[2, 5], List[3, 6]]
+    #
+    # @return [Consable] the transposed +Consable+ object.
+    def transpose
+      if empty?
+        empty
+      else
+        if head.empty?
+          tail.transpose
+        else
+          t = tail.filter { |x| !x.empty? }
+          Cons(Cons(head.head, t.map(&:head)),
+               Cons(head.tail, t.map(&:tail)).transpose)
+        end
+      end
     end
 
     protected
