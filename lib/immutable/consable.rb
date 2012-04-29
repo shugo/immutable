@@ -268,6 +268,40 @@ module Immutable
       }
     end
 
+    # Takes zero or more lists and returns a new list in which each element
+    # is an array of the corresponding elements of +self+ and the input
+    # lists.
+    #
+    # @param [Array<List>] xss the input lists.
+    # @return [List] the new list.
+    def zip(*xss)
+      if empty?
+        empty
+      else
+        heads = xss.map { |xs| xs.empty? ? nil : xs.head }
+        tails = xss.map { |xs| xs.empty? ? empty : xs.tail }
+        Cons([head, *heads], tail.zip(*tails))
+      end
+    end
+
+    # Takes zero or more lists and returns the list obtained by applying the
+    # given block to an array of the corresponding elements of +self+ and
+    # the input lists.
+    # +xs.zip_with(*yss, &block)+ is equivalent to
+    # +xs.zip(*yss).map(&block)+.
+    #
+    # @param [Array<List>] xss the input lists.
+    # @return [List] the new list.
+    def zip_with(*xss, &block)
+      if empty?
+        empty
+      else
+        heads = xss.map { |xs| xs.null? ? nil : xs.head }
+        tails = xss.map { |xs| xs.null? ? empty : xs.tail }
+        Cons(yield(head, *heads), tail.zip_with(*tails, &block))
+      end
+    end
+
     protected
 
     def prepend_to_all(sep)
