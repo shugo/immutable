@@ -131,10 +131,11 @@ module Immutable
     end
 
     # Returns a new +Consable+ object obtained by inserting +xs+ in between
-    # the lists in +self+ and concatenates the result.
+    # the +Consable+ objects in +self+ and concatenates the result.
     # +xss.intercalate(xs)+ is equivalent to +xss.intersperse(xs).flatten+.
     #
-    # @param [Consable] xs the list to insert between +Consable+ objects.
+    # @param [Consable] xs the +Consable+ object to insert between
+    #   +Consable+ objects.
     # @return [Consable] the new +Consable+ object.
     def intercalate(xs)
       intersperse(xs).flatten
@@ -251,6 +252,20 @@ module Immutable
           self
         end
       end
+    end
+
+    # Returns the elements in +self+ for which the given block evaluates to
+    # true.
+    #
+    # @return [Consable] the elements that satisfies the condition.
+    def filter
+      foldr(empty) { |x, xs|
+        if yield(x)
+          Cons(x, xs)
+        else
+          xs
+        end
+      }
     end
 
     protected

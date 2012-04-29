@@ -89,20 +89,6 @@ module Immutable
       self
     end
 
-    # Returns the elements in +self+ for which the given block evaluates to
-    # true.
-    #
-    # @return [List] the elements that satisfies the condition.
-    def filter
-      foldr(Nil) { |x, xs|
-        if yield(x)
-          Cons[x, xs]
-        else
-          xs
-        end
-      }
-    end
-
     # Takes zero or more lists and returns a new list in which each element
     # is an array of the corresponding elements of +self+ and the input
     # lists.
