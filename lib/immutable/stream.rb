@@ -229,25 +229,6 @@ module Immutable
       }
     end
 
-    # Concatenates a stream of streams.
-    #
-    # @return [Stream] the concatenated stream.
-    def flatten
-      Stream.lazy {
-        if empty?
-          self
-        else
-          if head.empty?
-            tail.flatten
-          else
-            Stream.cons ->{head.head}, ->{
-              Stream.cons(->{head.tail}, ->{tail}).flatten
-            }
-          end
-        end
-      }
-    end
-
     # Returns the stream obtained by applying the given block to each
     # element in +self+.
     #
@@ -308,23 +289,26 @@ module Immutable
       intersperse(xs).flatten
     end
 
-    # Returns the elements in +self+ for which the given block evaluates to
-    # true.
+    # Concatenates a stream of streams.
     #
-    # @return [Stream] the elements that satisfies the condition.
-    def filter(&block)
+    # @return [Stream] the concatenated stream.
+    def flatten
       Stream.lazy {
         if empty?
-          Stream.empty
+          self
         else
-          if yield(head)
-            Stream.cons ->{ head }, ->{ tail.filter(&block) }
+          if head.empty?
+            tail.flatten
           else
-            tail.filter(&block)
+            Stream.cons ->{head.head}, ->{
+              Stream.cons(->{head.tail}, ->{tail}).flatten
+            }
           end
         end
       }
     end
+
+    alias concat flatten
 
     # Returns the first +n+ elements of +self+, or +self+ itself if
     # +n > self.length+.
@@ -380,6 +364,24 @@ module Immutable
           self
         else
           tail.drop_while(&block)
+        end
+      }
+    end
+
+    # Returns the elements in +self+ for which the given block evaluates to
+    # true.
+    #
+    # @return [Stream] the elements that satisfies the condition.
+    def filter(&block)
+      Stream.lazy {
+        if empty?
+          Stream.empty
+        else
+          if yield(head)
+            Stream.cons ->{ head }, ->{ tail.filter(&block) }
+          else
+            tail.filter(&block)
+          end
         end
       }
     end
