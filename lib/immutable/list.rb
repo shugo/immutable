@@ -82,29 +82,6 @@ module Immutable
       # this method should be overriden
     end
 
-    # Builds a list from the seed value +e+ and the given block. The block
-    # takes a seed value and returns +nil+ if the seed should
-    # unfold to the empty list, or returns +[a, b]+, where
-    # +a+ is the head of the list and +b+ is the next
-    # seed from which to unfold the tail.  For example:
-    #
-    #   xs = List.unfoldr(3) { |x| x == 0 ? nil : [x, x - 1] }
-    #   p xs #=> List[3, 2, 1]
-    #
-    # +unfoldr+ is the dual of +foldr+.
-    #
-    # @param [Object] e the seed value.
-    # @return [List] the list built from the seed value and the block.
-    def self.unfoldr(e, &block)
-      x = yield(e)
-      if x.nil?
-        Nil
-      else
-        y, z = x
-        Cons[y, unfoldr(z, &block)]
-      end
-    end
-
     # Returns the first +n+ elements of +self+, or all the elements of
     # +self+ if +n > self.length+.
     #

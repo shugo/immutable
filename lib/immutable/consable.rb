@@ -33,6 +33,30 @@ module Immutable
         }.reverse
       end
 
+      # Builds a +Consable+ object from the seed value +e+ and the given
+      # block. The block takes a seed value and returns +nil+ if the seed
+      # should unfold to the empty +Consable+ object, or returns +[a, b]+,
+      # where +a+ is the head of the +Consable+ object and +b+ is the next
+      # seed from which to unfold the tail.  For example:
+      #
+      #   xs = List.unfoldr(3) { |x| x == 0 ? nil : [x, x - 1] }
+      #   p xs #=> List[3, 2, 1]
+      #
+      # +unfoldr+ is the dual of +foldr+.
+      #
+      # @param [Object] e the seed value.
+      # @return [Consable] the +Consable+ object built from the seed value
+      # and the block.
+      def unfoldr(e, &block)
+        x = yield(e)
+        if x.nil?
+          empty
+        else
+          y, z = x
+          Cons(y, unfoldr(z, &block))
+        end
+      end
+
       private
 
       def Cons(x, y)
