@@ -7,7 +7,8 @@ module Immutable
     module ClassMethods
       # Creates a new +Consable+ object populated with the given objects.
       #
-      # @param [Array<Object>] elements the elements of the list.
+      # @param [Array<Object>] elements the elements of the +Consable+
+      #   object.
       # @return [Consable] the new +Consable+ object.
       def [](*elements)
         from_array(elements)
@@ -185,6 +186,72 @@ module Immutable
 
     alias concat_map flat_map
     alias bind flat_map
+
+    # Returns the first +n+ elements of +self+, or all the elements of
+    # +self+ if +n > self.length+.
+    #
+    # @param [Integer] n the number of elements to take.
+    # @return [Consable] the first +n+ elements of +self+.
+    def take(n)
+      if empty?
+        empty
+      else
+        if n <= 0
+          empty
+        else
+          Cons(head, tail.take(n - 1))
+        end
+      end
+    end
+
+    # Returns the suffix of +self+ after the first +n+ elements, or
+    # an empty +Consable+ object if +n > self.length+.
+    #
+    # @param [Integer] n the number of elements to drop.
+    # @return [Consable] the suffix of +self+ after the first +n+ elements.
+    def drop(n)
+      if empty?
+        empty
+      else
+        if n > 0
+          tail.drop(n - 1)
+        else
+          self
+        end
+      end
+    end
+
+    # Returns the longest prefix of the elements of +self+ for which +block+
+    # evaluates to true.
+    #
+    # @return [Consable] the prefix of the elements of +self+.
+    def take_while(&block)
+      if empty?
+        empty
+      else
+        if yield(head)
+          Cons(head, tail.take_while(&block))
+        else
+          empty
+        end
+      end
+    end
+
+    # Returns the suffix remaining after
+    # +self.take_while(&block)+.
+    #
+    # @return [Consable] the suffix of the elements of +self+.
+    def drop_while(&block)
+      if empty?
+        empty
+      else
+        if yield(head)
+          tail.drop_while(&block)
+        else
+          self
+        end
+      end
+    end
 
     protected
 

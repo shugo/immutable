@@ -82,40 +82,6 @@ module Immutable
       # this method should be overriden
     end
 
-    # Returns the first +n+ elements of +self+, or all the elements of
-    # +self+ if +n > self.length+.
-    #
-    # @param [Integer] n the number of elements to take.
-    # @return [List] the first +n+ elements of +self+.
-    def take(n)
-      # this method should be overriden
-    end
-
-    # Returns the suffix of +self+ after the first +n+ elements, or
-    # +List[]+ if +n > self.length+.
-    #
-    # @param [Integer] n the number of elements to drop.
-    # @return [List] the suffix of +self+ after the first +n+ elements.
-    def drop(n)
-      # this method should be overriden
-    end
-
-    # Returns the longest prefix of the elements of +self+ for which +block+
-    # evaluates to true.
-    #
-    # @return [List] the prefix of the elements of +self+.
-    def take_while(&block)
-      # this method should be overriden
-    end
-
-    # Returns the suffix remaining after
-    # +self.take_while(&block)+.
-    #
-    # @return [List] the suffix of the elements of +self+.
-    def drop_while(&block)
-      # this method should be overriden
-    end
-
     # Returns +self+.
     #
     # @return [List] +self+.
@@ -226,54 +192,6 @@ module Immutable
 
     def empty?
       false
-    end
-
-    def Nil.take(n)
-      Nil
-    end
-
-    def take(n)
-      if n <= 0
-        Nil
-      else
-        Cons[@head, @tail.take(n - 1)]
-      end
-    end
-
-    def Nil.take_while
-      Nil
-    end
-
-    def take_while(&block)
-      if yield(@head)
-        Cons[@head, @tail.take_while(&block)]
-      else
-        Nil
-      end
-    end
-
-    def Nil.drop(n)
-      Nil
-    end
-
-    def drop(n)
-      if n > 0
-        @tail.drop(n - 1)
-      else
-        self
-      end
-    end
-
-    def Nil.drop_while
-      Nil
-    end
-
-    def drop_while(&block)
-      if yield(@head)
-        @tail.drop_while(&block)
-      else
-        self
-      end
     end
 
     def Nil.zip(*xss)
