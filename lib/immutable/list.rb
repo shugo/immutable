@@ -82,17 +82,6 @@ module Immutable
       # this method should be overriden
     end
 
-    # Returns the list obtained by concatenating the results of the given
-    # block for each element in +self+.
-    #
-    # @return [List] the obtained list.
-    def flat_map
-      foldr(Nil) { |x, xs| yield(x) + xs }
-    end
-
-    alias concat_map flat_map
-    alias bind flat_map
-
     # Builds a list from the seed value +e+ and the given block. The block
     # takes a seed value and returns +nil+ if the seed should
     # unfold to the empty list, or returns +[a, b]+, where

@@ -151,6 +151,17 @@ module Immutable
 
     alias concat flatten
 
+    # Returns the +Consable+ object obtained by concatenating the results of
+    # the given block for each element in +self+.
+    #
+    # @return [Consable] the obtained +Consable+ object.
+    def flat_map
+      foldr(empty) { |x, xs| yield(x) + xs }
+    end
+
+    alias concat_map flat_map
+    alias bind flat_map
+
     protected
 
     def prepend_to_all(sep)
