@@ -133,7 +133,10 @@ module Immutable
       attr_reader :left, :key, :value, :right
 
       def initialize(left, key, value, right)
-        @left, @key, @value, @right = left, key, value, right
+        @left = left
+        @key = key
+        @value = value
+        @right = right
       end
 
       def self.extract(val)
