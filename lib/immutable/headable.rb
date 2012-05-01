@@ -1,12 +1,7 @@
 require "immutable/foldable"
+require "immutable/empty_error"
 
 module Immutable
-  class EmptyError < StandardError
-    def initialize(msg = "collection is empty")
-      super(msg)
-    end
-  end
-
   module Headable
     include Enumerable
     include Foldable
