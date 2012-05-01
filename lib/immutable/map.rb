@@ -139,11 +139,6 @@ module Immutable
         @right = right
       end
 
-      def self.extract(val)
-        accept_self_instance_only(val)
-        [val.left, val.key, val.value, val.right]
-      end
-
       class << self
         alias [] new
       end
