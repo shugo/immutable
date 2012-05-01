@@ -346,12 +346,13 @@ module Immutable
       end
 
       def ins(key, value)
-        if key < self.key
-          RedFork[left.ins(key, value), self.key, self.value, right]
-        elsif key > self.key
-          RedFork[left, self.key, self.value, right.ins(key, value)]
+        x = key <=> @key
+        if x < 0
+          RedFork[@left.ins(key, value), @key, @value, @right]
+        elsif x > 0
+          RedFork[@left, @key, @value, @right.ins(key, value)]
         else
-          RedFork[left, key, value, right]
+          RedFork[@left, key, value, @right]
         end
       end
     end
@@ -374,12 +375,13 @@ module Immutable
       end
 
       def ins(key, value)
-        if key < self.key
-          balance(left.ins(key, value), self.key, self.value, right)
-        elsif key > self.key
-          balance(left, self.key, self.value, right.ins(key, value))
+        x = key <=> @key
+        if x < 0
+          balance(@left.ins(key, value), @key, @value, @right)
+        elsif x > 0
+          balance(@left, @key, @value, @right.ins(key, value))
         else
-          BlackFork[left, key, value, right]
+          BlackFork[@left, key, value, @right]
         end
       end
     end
