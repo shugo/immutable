@@ -153,9 +153,9 @@ module Immutable
       end
 
       def [](key)
-        if key < self.key
+        if key < @key
           @left[key]
-        elsif key > self.key
+        elsif key > @key
           @right[key]
         else
           @value
