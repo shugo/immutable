@@ -1,5 +1,4 @@
 require "immutable/foldable"
-require "immutable/empty_error"
 
 module Immutable
   # +Immutable::Map+ represents an immutable map from keys to
@@ -59,7 +58,7 @@ module Immutable
 
     # Deletes +key+ and its value from +self+.
     def delete(key)
-      m = make_red.del(key)
+      m = del(key)
       if m.empty?
         m
       else
@@ -118,14 +117,6 @@ module Immutable
       true
     end
 
-    def Leaf.minimum
-      raise EmptyError
-    end
-
-    def Leaf.del_min
-      raise EmptyError
-    end
-
     def Leaf.[](key)
       nil
     end
@@ -156,19 +147,6 @@ module Immutable
         false
       end
 
-      def ins(key, value)
-        x = key <=> @key
-        if x < 0
-          #balance_left(@left.ins(key, value), @key, @value, @right)
-          bal_left(self.class, @left.ins(key, value), @key, @value, @right)
-        elsif x > 0
-          #balance_right(@left, @key, @value, @right.ins(key, value))
-          bal_right(self.class, @left, @key, @value, @right.ins(key, value))
-        else
-          self.class[@left, key, value, @right]
-        end
-      end
-
       def [](key)
         x = key <=> @key
         if x < 0
@@ -180,55 +158,13 @@ module Immutable
         end
       end
 
-      def minimum
-        if @left.empty?
-          [@key, @value]
-        else
-          @left.minimum
-        end
-      end
-
       def del(key)
-        x = key <=> @key
-        if x < 0
-          del_left(@left, @key, @value, @right, key)
-        elsif x > 0
-          del_right(@left, @key, @value, @right, key)
+        if key < self.key
+          del_left(left, self.key, self.value, right, key)
+        elsif key > self.key
+          del_right(left, self.key, self.value, right, key)
         else
-          del_center(@left, @key, @value, @right, key)
-        end
-      end
-
-      def del_min
-        if red?
-          if @left.empty? && @right.empty?
-            Leaf
-          else
-            if @left.red?
-              RedFork[@left.del_min, @key, @value, @right]
-            elsif @left.black? && @left.left.black? &&
-              @right.black? && @right.left.red?
-              RedFork[
-                BlackFork[@left.make_red.del_min, @key, @value,
-                  @right.left.left],
-                @right.left.key,
-                @right.left.value,
-                BlackFork[@right.left.right, @right.key, @right.value,
-                  @right.right]
-              ]
-            elsif @left.black? && @left.left.black?
-              bal_right(BlackFork, @left.make_red.del_min, @key, @value,
-                        @right.make_red)
-            else
-              RedFork[
-                BlackFork[@left.left.del_min, @left.key, @left.value,
-                  @left.right],
-                @key, @value, @right
-              ]
-            end
-          end
-        else
-          raise InvarianceViolationError, "invariance violation"
+          app(left, right)
         end
       end
 
@@ -289,96 +225,51 @@ module Immutable
       end
 
       def del_left(left, key, value, right, del_key)
-        if red?
-          if left.black? && left.left.black?
-            if right.black? && right.left.red?
-              RedFork[
-                BlackFork[left.make_red.del(del_key),
-                  key, value, right.left.left],
-                  right.left.key, right.left.value,
-                  BlackFork[right.left.right, right.key, right.value,
-                    right.right]
-              ]
-            else
-              bal_right(BlackFork, left.make_red.del(del_key), key, value,
-                        right.make_red)
-            end
-          else
-            # raise InvarianceViolationError, "invariance violation"
-            self.class[left.del(del_key), key, value, right]
-          end
+        if left.black?
+          bal_left(left.del(del_key), key, value, right)
         else
-          self.class[left.del(del_key), key, value, right]
+          RedFork[left.del(del_key), key, value, right]
         end
       end
 
       def del_right(left, key, value, right, del_key)
+        if right.black?
+          bal_right(left, key, value, right.del(del_key))
+        else
+          RedFork[left, key, value, right.del(del_key)]
+        end
+      end
+
+      def bal_left(left, key, value, right)
         if left.red?
-          bal_right(self.class, left.left, left.key, left.value,
-                    RedFork[left.right, key, value, right].del(del_key))
-        elsif red?
-          if right.black? && right.left.black?
-            if left.black? && left.left.red?
-              RedFork[
-                left.left.make_black, left.key, left.value,
-                bal_right(BlackFork, left.right, key, value,
-                          right.make_red.del(del_key))
-              ]
-            else
-              bal_right(BlackFork, left.make_red, key, value,
-                        right.make_red.del(del_key))
-            end
-          else
-            RedFork[left, key, value, right.del(del_key)]
-          end
+          RedFork[left.make_black, key, value, right]
+        elsif right.black?
+          balance(left, key, value, right.make_red)
+        elsif right.red? && right.left.black?
+          RedFork[
+            BlackFork[left, key, value, right.left.left],
+            right.left.key, right.left.value,
+            balance(right.left.right, right.key, right.value,
+                    sub1(right.right))
+          ]
         else
-          raise InvarianceViolationError, "invariance violation"
+          raise ScriptError, "should not reach here"
         end
       end
 
-      def del_center(left, key, value, right, del_key)
-        if red? && left.empty? && right.empty?
-          Leaf
-        elsif left.red?
-          bal_right(self.class, left.left, left.key, left.value,
-                    RedFork[left.right, key, value, right].del(del_key))
-        elsif red?
-          if right.black? && right.left.black?
-            if left.black? && left.left.red?
-              bal_right(RedFork, left.left.make_black, left.key, left.value,
-                        bal_right(BlackFork, left.right, *right.minimum,
-                                  right.make_red.del_min))
-            else
-              bal_right(BlackFork, left.make_red, *right.minimum,
-                        right.make_red.del_min)
-            end
-          elsif right.black?
-            RedFork[left, *right.minimum,
-              BlackFork[right.left.del_min, right.key, right.value, right.right]
-            ]
-          end
+      def bal_right(left, key, value, right)
+        if right.red?
+          RedFork[left, key, value, right.make_black]
+        elsif left.black?
+          balance(left.make_red, key, value, right)
+        elsif left.red? && left.right.black?
+          RedFork[
+            balance(sub1(left.left), left.key, left.value, left.right.left),
+            left.right.key, left.right.value,
+            BlackFork[left.right.right, key, value, right]
+          ]
         else
-          raise InvarianceViolationError, "invariance violation"
-        end
-      end
-
-      def bal_left(node_class, left, key, value, right)
-        if node_class == BlackFork && left.red? && left.left.red?
-          RedFork[left.left.make_black, left.key, left.value,
-            BlackFork[left.right, key, value, right]]
-        else
-          node_class[left, key, value, right]
-        end
-      end
-
-      def bal_right(node_class, left, key, value, right)
-        if node_class == BlackFork && left.red? && right.red?
-          RedFork[left.make_black, key, value, right.make_black]
-        elsif right.red?
-          node_class[RedFork[left, key, value, right.left],
-            right.key, right.value, right.right]
-        else
-          node_class[left, key, value, right]
+          raise ScriptError, "should not reach here"
         end
       end
 
@@ -449,18 +340,14 @@ module Immutable
         BlackFork[left, key, value, right]
       end
 
-      private
-
-      def balance_left(left, key, value, right)
-        RedFork[left, key, value, right]
-      end
-
-      def balance_right(left, key, value, right)
-        if right.red?
-          RedFork[RedFork[left, key, value, right.left],
-            right.key, right.value, right.right]
+      def ins(key, value)
+        x = key <=> @key
+        if x < 0
+          RedFork[@left.ins(key, value), @key, @value, @right]
+        elsif x > 0
+          RedFork[@left, @key, @value, @right.ins(key, value)]
         else
-          RedFork[left, key, value, right]
+          RedFork[@left, key, value, @right]
         end
       end
     end
@@ -482,25 +369,14 @@ module Immutable
         self
       end
 
-      private
-
-      def balance_left(left, key, value, right)
-        if left.red? && left.left.red?
-          RedFork[left.left.make_black, left.key, left.value,
-            BlackFork[left.right, key, value, right]]
+      def ins(key, value)
+        x = key <=> @key
+        if x < 0
+          balance(@left.ins(key, value), @key, @value, @right)
+        elsif x > 0
+          balance(@left, @key, @value, @right.ins(key, value))
         else
-          BlackFork[left, key, value, right]
-        end
-      end
-
-      def balance_right(left, key, value, right)
-        if left.red? && right.red?
-          RedFork[left.make_black, key, value, right.make_black]
-        elsif right.red?
-          BlackFork[RedFork[left, key, value, right.left],
-            right.key, right.value, right.right]
-        else
-          BlackFork[left, key, value, right]
+          BlackFork[@left, key, value, @right]
         end
       end
     end
