@@ -164,18 +164,29 @@ module Immutable
     # evaluates to true.  If such an element is not found, it
     # returns +nil+.
     #
-    # @return [Object] the found element.
-    def find(&block)
+    # @param [#call, nil] ifnone
+    # @yield [element]
+    # @yieldreturn [Object] the found element.
+    # @return [Enumerator]
+    def find(ifnone=nil, &block)
+      return to_enum(__callee__, ifnone) unless block_given?
+
       if empty?
-        nil
+        if ifnone.nil?
+          nil
+        else
+          ifnone.call
+        end
       else
         if yield(head)
           head
         else
-          tail.find(&block)
+          tail.find(ifnone, &block)
         end
       end
     end
+    
+    alias detect find
 
     # Returns the +n+th element of +self+. If +n+ is out of range, +nil+ is
     # returned.

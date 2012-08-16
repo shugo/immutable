@@ -185,6 +185,14 @@ module Immutable
       assert_equal(nil, List[].find(&:odd?))
       assert_equal(1, List[1, 2, 3, 4, 5].find(&:odd?))
       assert_equal(2, List[1, 2, 3, 4, 5].find(&:even?))
+      assert_equal(nil, List[1, 2, 3, 4, 5].find{|elm|elm < 0})
+      assert_raise(ArgumentError) do
+        List[1, 2, 3, 4, 5].find(->{raise ArgumentError}){|elm|elm < 0}
+      end
+      
+      enum = List[1, 2, 3, 4, 5].find
+      assert_instance_of(Enumerator, enum)
+      assert_equal(2, enum.each(&:even?))
     end
 
     def test_filter
