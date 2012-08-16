@@ -1,6 +1,7 @@
 require_relative "../test_helper"
 
 with_tailcall_optimization {
+  require_relative "../../lib/immutable/list"
   require_relative "../../lib/immutable/map"
 }
 
