@@ -1,8 +1,8 @@
 require_relative "../test_helper"
 
 with_tailcall_optimization {
-  require "immutable/promise"
-  require "immutable/list"
+  require_relative "../../lib/immutable/promise"
+  require_relative "../../lib/immutable/list"
 }
 
 module Immutable

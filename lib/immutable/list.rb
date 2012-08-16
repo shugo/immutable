@@ -1,4 +1,4 @@
-require "immutable/consable"
+require_relative "consable"
 
 module Immutable
   # +Immutable::List+ represents an immutable list.

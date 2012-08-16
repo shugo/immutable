@@ -1,4 +1,4 @@
-require "immutable/foldable"
+require_relative "foldable"
 
 module Immutable
   # +Immutable::Map+ represents an immutable map from keys to

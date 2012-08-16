@@ -1,4 +1,4 @@
-require "immutable/stream"
+require_relative "stream"
 
 module Immutable
   # +Immutable::Queue+ is an implementation of real-time queues described in

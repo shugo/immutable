@@ -2,10 +2,10 @@
 module Immutable
 end
 
-require "immutable/list"
-require "immutable/map"
-require "immutable/promise"
-require "immutable/stream"
-require "immutable/queue"
-require "immutable/output_restricted_deque"
-require "immutable/deque"
+require_relative "immutable/list"
+require_relative "immutable/map"
+require_relative "immutable/promise"
+require_relative "immutable/stream"
+require_relative "immutable/queue"
+require_relative "immutable/output_restricted_deque"
+require_relative "immutable/deque"

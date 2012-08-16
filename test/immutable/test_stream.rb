@@ -1,7 +1,7 @@
 require_relative "../test_helper"
 
 with_tailcall_optimization {
-  require "immutable/stream"
+  require_relative "../../lib/immutable/stream"
 }
 
 module Immutable

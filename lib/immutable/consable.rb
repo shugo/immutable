@@ -1,4 +1,4 @@
-require "immutable/headable"
+require_relative "headable"
 
 module Immutable
   module Consable

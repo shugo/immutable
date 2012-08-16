@@ -1,5 +1,5 @@
-require "immutable/stream"
-require "immutable/consable"
+require_relative "stream"
+require_relative "consable"
 
 module Immutable
   # +Immutable::Deque+ is an implementation of real-time deques described in

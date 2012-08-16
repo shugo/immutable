@@ -1,8 +1,8 @@
-require 'benchmark'
-require 'avl_tree'
-require 'red_black_tree'
-require 'immutable/map'
-require 'openssl'
+require "benchmark"
+require "avl_tree"
+require "red_black_tree"
+require_relative "../lib/immutable/map"
+require "openssl"
 
 #random = Random.new(0)
 
