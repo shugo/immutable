@@ -88,11 +88,18 @@ module Immutable
     end
 
     # Calls +block+ once for each element in +self+.
+    # @yield [element]
+    # @yieldreturn [self]
+    # @return [Enumerator]
     def each(&block)
+      return to_enum unless block_given?
+  
       unless empty?
         yield(head)
         tail.each(&block)
       end
+      
+      self
     end
 
     # Reduces +self+ using +block+ from right to left. +e+ is used as the

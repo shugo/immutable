@@ -56,13 +56,24 @@ module Immutable
     end
 
     def test_each
+      list = List[]
       a = []
-      List[].each { |x| a << x }
+      assert_same(list, list.each { |x| a << x })
       assert_equal([], a)
-
+      
+      list = List[1, 2, 3]
       a = []
-      List[1, 2, 3].each { |x| a << x }
+      assert_same(list, list.each { |x| a << x })
       assert_equal([1, 2, 3], a)
+      
+      enum = List[1, 2, 3].each
+      assert_instance_of(Enumerator, enum)
+      assert_equal(1, enum.next)
+      assert_equal(2, enum.next)
+      assert_equal(3, enum.next)
+      assert_raise(StopIteration) do
+        enum.next
+      end
     end
 
     def test_foldr
