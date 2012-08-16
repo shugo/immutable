@@ -277,9 +277,12 @@ module Immutable
       assert_equal(24, List[1, 2, 3, 4].product)
     end
 
-    def test_s_unfoldr
+    def test_unfoldr
       xs = List.unfoldr(3) { |x| x == 0 ? nil : [x, x - 1] }
       assert_equal(List[3, 2, 1], xs)
+    end
+
+    def test_s_unfoldr
       xs = List.unfoldr("foo,bar,baz") { |x|
         if x.empty?
           nil

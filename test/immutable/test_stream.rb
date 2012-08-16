@@ -309,9 +309,12 @@ module Immutable
       assert_equal(Stream[], Stream[1, 2, 3].drop_while { |x| x < 4 })
     end
 
-    def test_s_unfoldr
+    def test_unfoldr
       xs = Stream.unfoldr(3) { |x| x == 0 ? nil : [x, x - 1] }
       assert_equal(Stream[3, 2, 1], xs)
+    end
+
+    def test_s_unfoldr
       xs = Stream.unfoldr("foo,bar,baz") { |x|
         if x.empty?
           nil
