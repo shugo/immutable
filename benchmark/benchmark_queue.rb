@@ -1,6 +1,6 @@
-require 'benchmark'
-require 'immutable/queue'
-require 'immutable/map'
+require "benchmark"
+require_relative "../lib/immutable/queue"
+require_relative "../lib/immutable/map"
 
 TIMES = 100000
 key_size = 10

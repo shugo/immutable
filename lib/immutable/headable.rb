@@ -1,4 +1,4 @@
-require "immutable/foldable"
+require_relative "foldable"
 
 module Immutable
   class EmptyError < StandardError

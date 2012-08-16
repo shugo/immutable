@@ -1,6 +1,6 @@
-require 'benchmark'
-require 'immutable/deque'
-require 'immutable/map'
+require "benchmark"
+require_relative "../lib/immutable/deque"
+require_relative "../lib/immutable/map"
 
 TIMES = 100000
 key_size = 10

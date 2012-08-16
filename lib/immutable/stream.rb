@@ -1,5 +1,5 @@
-require "immutable/list"
-require "immutable/promise"
+require_relative "list"
+require_relative "promise"
 
 module Immutable
   # +Immutable::Stream+ represents a stream, also known as a lazy list.

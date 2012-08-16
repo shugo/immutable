@@ -1,4 +1,4 @@
-require "immutable/queue"
+require_relative "queue"
 
 module Immutable
   # +Immutable::OutputRestrictedDeque+ is an implementation of
