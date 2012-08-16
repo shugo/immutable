@@ -121,6 +121,7 @@ module Immutable
       assert(List[1] == List[1])
       assert(List[1] != List[2])
       assert(List[1] != [1])
+      assert(List[1] == List[1.0])
       assert(List["foo"] == List["foo"])
       assert(List["foo"] != List["bar"])
       assert(List[1, 2, 3] == List[1, 2, 3])
@@ -128,6 +129,20 @@ module Immutable
       assert(List[1, 2, 3] != List[1, 2, 3, 4])
       assert(List[List[1, 2], List[3, 4]] == List[List[1, 2], List[3, 4]])
       assert(List[List[1, 2], List[3, 4]] != List[List[1, 2], List[3]])
+    end
+
+    def test_eql
+      assert(List[].eql? List[])
+      assert(List[1].eql? List[1])
+      assert_same(List[1].eql?(List[1.0]), false)
+      assert(List["foo"].eql? List["foo"])
+      assert(List[1, 2, 3].eql? List[1, 2, 3])
+      assert(List[List[1, 2], List[3, 4]].eql? List[List[1, 2], List[3, 4]])
+    end
+    
+    def test_hash_key
+      assert_same({List[1] => true}[List[1.0]], nil)
+      assert_same({List[1] => true}[List[1]], true)
     end
 
     def test_inspect

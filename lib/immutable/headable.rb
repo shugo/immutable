@@ -87,6 +87,23 @@ module Immutable
       end
     end
 
+    def eql?(x)
+      if !x.is_a?(self.class)
+        false
+      else
+        if empty?
+          x.empty?
+        else
+          !x.empty? && head.eql?(x.head) && tail.eql?(x.tail)
+        end
+      end
+    end
+    
+    # @return [Integer]
+    def hash
+      to_a.hash
+    end
+
     # Calls +block+ once for each element in +self+.
     # @yield [element]
     # @yieldreturn [self]
