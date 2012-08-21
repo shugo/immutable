@@ -56,13 +56,24 @@ module Immutable
     end
 
     def test_each
+      list = List[]
       a = []
-      List[].each { |x| a << x }
+      assert_same(list, list.each { |x| a << x })
       assert_equal([], a)
-
+      
+      list = List[1, 2, 3]
       a = []
-      List[1, 2, 3].each { |x| a << x }
+      assert_same(list, list.each { |x| a << x })
       assert_equal([1, 2, 3], a)
+      
+      enum = List[1, 2, 3].each
+      assert_instance_of(Enumerator, enum)
+      assert_equal(1, enum.next)
+      assert_equal(2, enum.next)
+      assert_equal(3, enum.next)
+      assert_raise(StopIteration) do
+        enum.next
+      end
     end
 
     def test_foldr
@@ -110,6 +121,7 @@ module Immutable
       assert(List[1] == List[1])
       assert(List[1] != List[2])
       assert(List[1] != [1])
+      assert(List[1] == List[1.0])
       assert(List["foo"] == List["foo"])
       assert(List["foo"] != List["bar"])
       assert(List[1, 2, 3] == List[1, 2, 3])
@@ -117,6 +129,20 @@ module Immutable
       assert(List[1, 2, 3] != List[1, 2, 3, 4])
       assert(List[List[1, 2], List[3, 4]] == List[List[1, 2], List[3, 4]])
       assert(List[List[1, 2], List[3, 4]] != List[List[1, 2], List[3]])
+    end
+
+    def test_eql
+      assert(List[].eql? List[])
+      assert(List[1].eql? List[1])
+      assert_same(List[1].eql?(List[1.0]), false)
+      assert(List["foo"].eql? List["foo"])
+      assert(List[1, 2, 3].eql? List[1, 2, 3])
+      assert(List[List[1, 2], List[3, 4]].eql? List[List[1, 2], List[3, 4]])
+    end
+    
+    def test_hash_key
+      assert_same({List[1] => true}[List[1.0]], nil)
+      assert_same({List[1] => true}[List[1]], true)
     end
 
     def test_inspect
@@ -174,6 +200,14 @@ module Immutable
       assert_equal(nil, List[].find(&:odd?))
       assert_equal(1, List[1, 2, 3, 4, 5].find(&:odd?))
       assert_equal(2, List[1, 2, 3, 4, 5].find(&:even?))
+      assert_equal(nil, List[1, 2, 3, 4, 5].find{|elm|elm < 0})
+      assert_raise(ArgumentError) do
+        List[1, 2, 3, 4, 5].find(->{raise ArgumentError}){|elm|elm < 0}
+      end
+      
+      enum = List[1, 2, 3, 4, 5].find
+      assert_instance_of(Enumerator, enum)
+      assert_equal(2, enum.each(&:even?))
     end
 
     def test_filter
@@ -277,9 +311,12 @@ module Immutable
       assert_equal(24, List[1, 2, 3, 4].product)
     end
 
-    def test_s_unfoldr
+    def test_unfoldr
       xs = List.unfoldr(3) { |x| x == 0 ? nil : [x, x - 1] }
       assert_equal(List[3, 2, 1], xs)
+    end
+
+    def test_s_unfoldr
       xs = List.unfoldr("foo,bar,baz") { |x|
         if x.empty?
           nil

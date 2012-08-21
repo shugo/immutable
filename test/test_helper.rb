@@ -1,3 +1,5 @@
+$VERBOSE = true
+
 require "test/unit"
 
 def with_tailcall_optimization
