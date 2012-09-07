@@ -106,8 +106,16 @@ module Immutable
     # each element in +self+.
     #
     # @return [Consable] the obtained +Consable+ object.
-    def map
-      foldr(empty) { |x, xs| Cons(yield(x), xs) }
+    def map(&block)
+      rev_map(&block).reverse
+    end
+
+    # Returns the +Consable+ object obtained by applying the given block to
+    # each element in +self+ in reverse order.
+    #
+    # @return [Consable] the obtained +Consable+ object.
+    def rev_map
+      foldl(empty) { |xs, x| Cons(yield(x), xs) }
     end
 
     # Returns the elements of +self+ in reverse order.

@@ -191,6 +191,11 @@ module Immutable
       assert_equal(List["1", "2", "3"], List[1, 2, 3].map(&:to_s))
     end
 
+    def test_rev_map
+      assert_equal(List[], List[].rev_map(&:to_s))
+      assert_equal(List["3", "2", "1"], List[1, 2, 3].rev_map(&:to_s))
+    end
+
     def test_flat_map
       assert_equal(List[], List[].flat_map {})
       assert_equal(List["1", "2", "3"], List[1, 2, 3].map(&:to_s))
