@@ -1,7 +1,7 @@
 require 'rubygems'
 Gem::Specification.new { |s|
   s.name = "immutable"
-  s.version = "0.3.0"
+  s.version = "0.3.1"
   s.date = "2012-09-07"
   s.author = "Shugo Maeda"
   s.email = "shugo@ruby-lang.org"
