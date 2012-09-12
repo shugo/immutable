@@ -8,7 +8,9 @@ This project aims to provide immutable data structures for Ruby.
 Install
 -------
 
-	$ gem install immutable
+```bash
+$ gem install immutable
+```
 
 Documentation
 -------------
