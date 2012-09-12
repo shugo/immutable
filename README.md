@@ -3,6 +3,8 @@ immutable - immutable data structures for Ruby
 
 This project aims to provide immutable data structures for Ruby.
 
+[![Build Status](https://secure.travis-ci.org/shugo/immutable.png)](http://travis-ci.org/shugo/immutable)
+
 Install
 ========================
 
