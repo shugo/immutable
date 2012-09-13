@@ -105,6 +105,11 @@ module Immutable
       end
     end
 
+    def test_to_h
+      assert_equal({}, Map[].to_h)
+      assert_equal({a: 1, c: 3, b: 2}, Map[a: 1, c: 3, b: 2].to_h)
+    end
+
     def test_foldr
       xs = Map[].foldr(List[]) { |v, ys| Cons[v, ys] }
       assert_equal(List[], xs)
