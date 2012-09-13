@@ -97,6 +97,63 @@ module Immutable
       end
     end
 
+    def test_index
+      list = List[]
+      assert_equal(nil, list.index(1))
+
+      list = List[1, 2, 1]
+      assert_equal(0, list.index(1))
+      assert_equal(1, list.index(2))
+      assert_equal(nil, list.index(3))
+
+      verbose = $VERBOSE
+      $VERBOSE = nil
+      list = List[1, 2, 1]
+      assert_equal(0, list.index(1) {|e| e * 2 == 4 })
+      assert_equal(1, list.index(2) {|e| e * 2 == 4 })
+      assert_equal(nil, list.index(3) {|e| e * 2 == 4 })
+      $VERBOSE = verbose
+
+      list = List[1, 2, 1]
+      assert_equal(0, list.index {|e| e * 2 == 2 })
+      assert_equal(1, list.index {|e| e * 2 == 4 })
+      assert_equal(nil, list.index {|e| e * 2 == 6 })
+
+      enum = List[1, 2, 1].index
+      assert_instance_of(Enumerator, enum)
+      assert_equal(0, enum.each {|v|v == 1})
+      assert_equal(1, enum.each {|v|v == 2})
+      assert_equal(nil, enum.each {|v|v == 3})
+    end
+
+    def test_rindex
+      list = List[]
+      assert_equal(nil, list.rindex(1))
+
+      list = List[1, 2, 1]
+      assert_equal(2, list.rindex(1))
+      assert_equal(1, list.rindex(2))
+      assert_equal(nil, list.rindex(3))
+
+      verbose = $VERBOSE
+      $VERBOSE = nil
+      list = List[1, 2, 1]
+      assert_equal(2, list.rindex(1) {|e| e * 2 == 4 })
+      assert_equal(1, list.rindex(2) {|e| e * 2 == 4 })
+      assert_equal(nil, list.rindex(3) {|e| e * 2 == 4 })
+      $VERBOSE = verbose
+
+      list = List[1, 2, 1]
+      assert_equal(2, list.rindex {|e| e * 2 == 2 })
+      assert_equal(1, list.rindex {|e| e * 2 == 4 })
+      assert_equal(nil, list.rindex {|e| e * 2 == 6 })
+
+      enum = List[1, 2, 1].rindex
+      assert_instance_of(Enumerator, enum)
+      assert_equal(2, enum.each {|v|v == 1})
+      assert_equal(nil, enum.each {|v|v == 3})
+    end
+
     def test_foldr
       assert_equal(0, List[].foldr(0, &:+))
       assert_equal(123, List[].foldr(123, &:+))

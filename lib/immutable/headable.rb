@@ -278,6 +278,70 @@ module Immutable
       end
     end
 
+    # @overload index(val)
+    #   @return [Integer, nil] index
+    # @overload index
+    #   @return [Enumerator]
+    # @overload index {}
+    #   @yieldreturn [Integer, nil] index
+    def index(*args)
+      alen = args.length
+      val = args.first
+
+      raise ArgumentError unless (0..1).cover?(alen)
+      return to_enum(__callee__) if !block_given? && alen == 0
+
+      if alen == 1
+        if block_given?
+          warn "#{__LINE__}:warning: given block not used"
+        end
+
+        each_with_index { |e, idx|
+          return idx if e == val
+        }
+      else
+        if block_given?
+          each_with_index { |e, idx|
+            return idx if yield(e)
+          }
+        end
+      end
+
+      nil
+    end
+
+    # @overload rindex(val)
+    #   @return [Integer, nil] index
+    # @overload rindex
+    #   @return [Enumerator]
+    # @overload rindex {}
+    #   @yieldreturn [Integer, nil] index
+    def rindex(*args)
+      alen = args.length
+      val = args.first
+
+      raise ArgumentError unless (0..1).cover?(alen)
+      return to_enum(__callee__) if !block_given? && alen == 0
+
+      if alen == 1
+        if block_given?
+          warn "#{__LINE__}:warning: given block not used"
+        end
+
+        reverse_each.with_index { |e, idx|
+          return length - (idx + 1) if e == val
+        }
+      else
+        if block_given?
+          reverse_each.with_index { |e, idx|
+            return length - (idx + 1) if yield(e)
+          }
+        end
+      end
+
+      nil
+    end
+
     # Converts +self+ to a list.
     #
     # @return [List] a list.
