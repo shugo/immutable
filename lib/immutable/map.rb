@@ -81,8 +81,14 @@ module Immutable
     alias to_s inspect
 
     # Calls +block+ once for each key/value in +self+.
+    # @yield [key, element]
+    # @yieldreturn [self]
+    # @return [self]
     def each(&block)
+      return to_enum(__callee__) unless block_given?
+
       foldl_with_key(nil) { |x, k, v| yield([k, v]) }
+      self
     end
 
     alias each_pair each

@@ -59,22 +59,50 @@ module Immutable
 
     def test_each
       a = []
-      Map[].each { |x| a << x }
+      map = Map[]
+      ret = map.each { |x| a << x }
       assert_equal([], a)
+      assert_same(ret, map)
+      enum = map.each
+      assert_instance_of(Enumerator, enum)
 
       a = []
-      Map[a: 1, c: 3, b: 2].each { |x| a << x }
+      map = Map[a: 1, c: 3, b: 2]
+      ret = map.each { |x| a << x }
       assert_equal([[:a, 1], [:b, 2], [:c, 3]], a)
+      assert_same(ret, map)
+      enum = map.each
+      assert_instance_of(Enumerator, enum)
+      assert_equal([:a, 1], enum.next)
+      assert_equal([:b, 2], enum.next)
+      assert_equal([:c, 3], enum.next)
+      assert_raise(StopIteration) do
+        enum.next
+      end
     end
 
     def test_each_pair
       a = []
-      Map[].each_pair { |x| a << x }
+      map = Map[]
+      ret = map.each_pair { |x| a << x }
       assert_equal([], a)
+      assert_same(ret, map)
+      enum = map.each_pair
+      assert_instance_of(Enumerator, enum)
 
       a = []
-      Map[a: 1, c: 3, b: 2].each_pair { |x| a << x }
+      map = Map[a: 1, c: 3, b: 2]
+      ret = map.each_pair { |x| a << x }
       assert_equal([[:a, 1], [:b, 2], [:c, 3]], a)
+      assert_same(ret, map)
+      enum = map.each_pair
+      assert_instance_of(Enumerator, enum)
+      assert_equal([:a, 1], enum.next)
+      assert_equal([:b, 2], enum.next)
+      assert_equal([:c, 3], enum.next)
+      assert_raise(StopIteration) do
+        enum.next
+      end
     end
 
     def test_foldr
