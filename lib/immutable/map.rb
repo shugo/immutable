@@ -66,6 +66,7 @@ module Immutable
       end
     end
 
+    # @return [String]
     def inspect
       "Map[" + foldr_with_key("") { |k, v, s|
         x = k.inspect + " => " + v.inspect
