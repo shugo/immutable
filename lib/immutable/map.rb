@@ -113,6 +113,11 @@ module Immutable
       foldr_with_key(List[]) { |k, v, xs| Cons[yield(k, v), xs] }
     end
 
+    # @return [Hash]
+    def to_h
+      Hash[each_pair.to_a]
+    end
+
     # :nodoc:
     Leaf = Map.new
 
