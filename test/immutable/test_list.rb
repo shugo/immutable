@@ -234,6 +234,19 @@ module Immutable
       end
     end
 
+    def test_at
+      assert_equal(nil, List[].at(0))
+      assert_equal(1, List[1, 2, 3].at(0))
+      assert_equal(nil, List[1, 2, 3].at(-1))
+      assert_equal(2, List[1, 2, 3].at(1))
+      assert_equal(3, List[1, 2, 3].at(2))
+      assert_equal(nil, List[1, 2, 3].at(3))
+      assert_equal(2, List[1, 2, 3].at(1.1))
+      assert_raise TypeError do
+        List[1, 2, 3].at('1')
+      end
+    end
+
     def test_take
       assert_equal(List[], List[].take(1))
       assert_equal(List[], List[1, 2, 3].take(0))

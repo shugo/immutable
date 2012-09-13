@@ -223,6 +223,8 @@ module Immutable
       end
     end
 
+    alias at []
+
     # Converts +self+ to a list.
     #
     # @return [List] a list.
