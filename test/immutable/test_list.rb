@@ -184,6 +184,10 @@ module Immutable
       assert_equal(List[List[1]], List[List[List[1]]].flatten)
       assert_equal(List[1, 2, 3], List[List[1, 2], List[3]].flatten)
       assert_equal(List[1, 2, 3], List[List[1], List[2], List[3]].flatten)
+      assert_equal(List[1, 2, 3], List[List[1], 2, List[3]].flatten)
+      assert_equal(List[1, [2], 3], List[List[1], [2], List[3]].flatten)
+      obj = Object.new
+      assert_equal(List[obj, 'str', obj], List[obj, 'str', obj].flatten)
     end
 
     def test_map
