@@ -57,6 +57,43 @@ module Immutable
       end
     end
 
+    def test_eq
+      assert_same(true, Map[] == Map[])
+      assert_same(true, Map[a: 1, c: 3, b: 2] == Map[c: 3, b: 2, a: 1])
+      assert_same(false, Map[] == {})
+      assert_same(false, Map[a: 1, c: 3, b: 2] == Map[c: 3, b: 2, a: 1, A: 1])
+      assert_same(false, Map[a: 1, c: 3, b: 2] == Map[c: 3, b: 2, a: '1'])
+      assert_same(false, Map[a: 1, c: 3, b: 2] == Map[c: 3, b: 2])
+    end
+
+    def test_case_equal
+      assert_same(true, Map[] === Map[])
+      assert_same(true, Map[a: 1, c: 3, b: 2] === Map[c: 3, b: 2, a: 1])
+      assert_same(false, Map[] === {})
+      assert_same(false, Map[a: 1, c: 3, b: 2] === Map[c: 3, b: 2, a: 1, A: 1])
+      assert_same(false, Map[a: 1, c: 3, b: 2] === Map[c: 3, b: 2, a: '1'])
+      assert_same(false, Map[a: 1, c: 3, b: 2] === Map[c: 3, b: 2])
+    end
+
+    def test_eql
+      assert_same(true, Map[] == Map[])
+      assert_same(true, Map[a: 1, c: 3, b: 2].eql?(Map[c: 3, b: 2, a: 1]))
+      assert_same(false, Map[].eql?({}))
+      assert_same(false, Map[a: 1, c: 3, b: 2].eql?(Map[c: 3, b: 2, a: 1, A: 1]))
+      assert_same(false, Map[a: 1, c: 3, b: 2].eql?(Map[c: 3, b: 2, a: '1']))
+      assert_same(false, Map[a: 1, c: 3, b: 2].eql?(Map[c: 3, b: 2]))
+    end
+
+    def test_hash_key
+      map1 = Map[1 => 1, 2 => 3]
+      map2 = Map[1 => 1, 2 => 3]
+      map3 = Map[1 => 1, 2.0 => 3]
+      hash = {map1 => true}
+      assert_same(true, hash.has_key?(map1))
+      assert_same(true, hash.has_key?(map2))
+      assert_same(false, hash.has_key?(map3))
+    end
+
     def test_each
       a = []
       map = Map[]
