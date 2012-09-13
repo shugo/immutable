@@ -211,6 +211,7 @@ module Immutable
     # @param [Integer, #to_int] n
     # @return [Object] the +n+th element.
     def [](n)
+      raise TypeError unless n.respond_to?(:to_int)
       int = n.to_int
 
       if int < 0 || empty?
