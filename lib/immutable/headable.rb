@@ -119,6 +119,17 @@ module Immutable
       self
     end
 
+    # Calls +block+ once for each index in +self+.
+    # @yield [index]
+    # @yieldparam [Integer] index
+    # @yieldreturn [self]
+    # @return [Enumerator]
+    def each_index
+      return to_enum(__callee__) unless block_given?
+  
+      each_with_index{ |_, idx| yield(idx) }
+    end
+
     # Reduces +self+ using +block+ from right to left. +e+ is used as the
     # starting value. For example:
     #

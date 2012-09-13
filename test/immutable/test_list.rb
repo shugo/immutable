@@ -76,6 +76,27 @@ module Immutable
       end
     end
 
+    def test_each_index
+      list = List[]
+      a = []
+      assert_same(list, list.each_index { |x| a << x })
+      assert_equal([], a)
+      
+      list = List[1, 2, 3]
+      a = []
+      assert_same(list, list.each_index { |x| a << x })
+      assert_equal([0, 1, 2], a)
+      
+      enum = List[1, 2, 3].each_index
+      assert_instance_of(Enumerator, enum)
+      assert_equal(0, enum.next)
+      assert_equal(1, enum.next)
+      assert_equal(2, enum.next)
+      assert_raise(StopIteration) do
+        enum.next
+      end
+    end
+
     def test_foldr
       assert_equal(0, List[].foldr(0, &:+))
       assert_equal(123, List[].foldr(123, &:+))
