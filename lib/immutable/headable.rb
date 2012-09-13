@@ -211,12 +211,14 @@ module Immutable
     # @param [Integer, #to_int] n
     # @return [Object] the +n+th element.
     def [](n)
-      if n < 0 || empty?
+      int = n.to_int
+
+      if int < 0 || empty?
         nil
-      elsif n == 0
+      elsif int == 0
         head
       else
-        tail[n - 1]
+        tail[int - 1]
       end
     end
 

@@ -228,6 +228,7 @@ module Immutable
       assert_equal(2, List[1, 2, 3][1])
       assert_equal(3, List[1, 2, 3][2])
       assert_equal(nil, List[1, 2, 3][3])
+      assert_equal(2, List[1, 2, 3][1.1])
     end
 
     def test_take
