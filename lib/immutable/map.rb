@@ -66,6 +66,22 @@ module Immutable
       end
     end
 
+    # @return [Boolean]
+    def ==(x)
+      x.is_a?(self.class) && (to_h == x.to_h)
+    end
+
+    alias === ==
+
+    def eql?(x)
+      x.is_a?(self.class) && to_h.eql?(x.to_h)
+    end
+
+    # @return [Integer]
+    def hash
+      to_h.hash
+    end
+
     # @return [String]
     def inspect
       "Map[" + foldr_with_key("") { |k, v, s|
