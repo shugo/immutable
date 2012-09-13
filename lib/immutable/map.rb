@@ -85,6 +85,8 @@ module Immutable
       foldl_with_key(nil) { |x, k, v| yield([k, v]) }
     end
 
+    alias each_pair each
+
     # Folds the values in +self+ from right to left.
     def foldr(e)
       foldr_with_key(e) { |k, v, x| yield(v, x) }

@@ -67,6 +67,16 @@ module Immutable
       assert_equal([[:a, 1], [:b, 2], [:c, 3]], a)
     end
 
+    def test_each_pair
+      a = []
+      Map[].each_pair { |x| a << x }
+      assert_equal([], a)
+
+      a = []
+      Map[a: 1, c: 3, b: 2].each_pair { |x| a << x }
+      assert_equal([[:a, 1], [:b, 2], [:c, 3]], a)
+    end
+
     def test_foldr
       xs = Map[].foldr(List[]) { |v, ys| Cons[v, ys] }
       assert_equal(List[], xs)
