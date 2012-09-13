@@ -78,6 +78,8 @@ module Immutable
       } + "]"
     end
 
+    alias to_s inspect
+
     # Calls +block+ once for each key/value in +self+.
     def each(&block)
       foldl_with_key(nil) { |x, k, v| yield([k, v]) }
