@@ -196,6 +196,43 @@ module Immutable
                    s.inspect)
     end
 
+    def test_to_s
+      s = Stream[]
+      assert_equal('Stream[...]', s.to_s)
+      assert_equal(nil, s[0])
+      assert_equal('Stream[]', s.to_s)
+      s = Stream[1]
+      assert_equal('Stream[...]', s.to_s)
+      assert_equal(1, s[0])
+      assert_equal('Stream[1, ...]', s.to_s)
+      assert_equal(nil, s[1])
+      assert_equal('Stream[1]', s.to_s)
+      s = Stream["foo"]
+      assert_equal("foo", s[0])
+      assert_equal('Stream["foo", ...]', s.to_s)
+      assert_equal(nil, s[1])
+      assert_equal('Stream["foo"]', s.to_s)
+      s = Stream[1, 2, 3]
+      assert_equal('Stream[...]', s.to_s)
+      assert_equal(1, s[0])
+      assert_equal('Stream[1, ...]', s.to_s)
+      assert_equal(2, s[1])
+      assert_equal('Stream[1, 2, ...]', s.to_s)
+      assert_equal(3, s[2])
+      assert_equal('Stream[1, 2, 3, ...]', s.to_s)
+      assert_equal(nil, s[3])
+      assert_equal('Stream[1, 2, 3]', s.to_s)
+      s = Stream[1, 2, 3]
+      assert_equal(2, s[1])
+      assert_equal('Stream[?, 2, ...]', s.to_s)
+      s = Stream[Stream[1, 2], Stream[3, 4]]
+      assert_equal(Stream[1, 2], s[0])
+      assert_equal(Stream[3, 4], s[1])
+      assert_equal(nil, s[2])
+      assert_equal('Stream[Stream[1, 2], Stream[3, 4]]',
+                   s.to_s)
+    end
+
     def test_length
       assert_equal(0, Stream[].length)
       assert_equal(1, Stream[1].length)

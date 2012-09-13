@@ -193,6 +193,8 @@ module Immutable
       "Stream[" + inspect_i + "]"
     end
 
+    alias to_s inspect
+
     def inspect_i(s = nil)
       if eager?
         if empty?
