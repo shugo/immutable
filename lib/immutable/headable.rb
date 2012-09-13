@@ -70,6 +70,8 @@ module Immutable
       end
     end
 
+    alias to_s inspect
+
     # Returns whether +self+ equals to +x+.
     #
     # @param [Object] x the object to compare.

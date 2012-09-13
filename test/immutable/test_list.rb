@@ -154,6 +154,15 @@ module Immutable
                    List[List[1, 2], List[3, 4]].inspect)
     end
 
+    def test_to_s
+      assert_equal('List[]', List[].to_s)
+      assert_equal('List[1]', List[1].to_s)
+      assert_equal('List["foo"]', List["foo"].to_s)
+      assert_equal('List[1, 2, 3]', List[1, 2, 3].to_s)
+      assert_equal('List[List[1, 2], List[3, 4]]',
+                   List[List[1, 2], List[3, 4]].to_s)
+    end
+
     def test_length
       assert_equal(0, List[].length)
       assert_equal(1, List[1].length)
