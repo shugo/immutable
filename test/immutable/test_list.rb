@@ -247,6 +247,50 @@ module Immutable
       end
     end
 
+    def test_fetch
+      assert_raise ArgumentError do
+        List[].fetch
+      end
+
+      assert_raise IndexError do
+        List[].fetch(0)
+      end
+
+      assert_equal(1, List[1, 2, 3].fetch(0))
+
+      assert_raise IndexError do
+        List[1, 2, 3].fetch(-1)
+      end
+
+      assert_equal(2, List[1, 2, 3].fetch(1))
+      assert_equal(3, List[1, 2, 3].fetch(2))
+
+      assert_raise IndexError do
+        List[1, 2, 3].fetch(3)
+      end
+
+      assert_equal(2, List[1, 2, 3].fetch(1.1))
+
+      assert_raise TypeError do
+        List[1, 2, 3].fetch('1')
+      end
+
+      assert_equal(9, List[].fetch(0, 9))
+      assert_equal(2, List[1, 2, 3].fetch(1, 9))
+      assert_equal(9, List[1, 2, 3].fetch(4, 9))
+
+      assert_equal(5, List[].fetch(0) {|n| n + 5 })
+      assert_equal(2, List[1, 2, 3].fetch(1) {|n| n + 5 })
+      assert_equal(8, List[1, 2, 3].fetch(4) {|n| n * 2 })
+
+      verbose = $VERBOSE
+      $VERBOSE = nil
+      assert_equal(5, List[].fetch(0, 9) {|n| n + 5 })
+      assert_equal(2, List[1, 2, 3].fetch(1, 9) {|n| n + 5 })
+      assert_equal(8, List[1, 2, 3].fetch(4, 9) {|n| n * 2 })
+      $VERBOSE = verbose
+    end
+
     def test_take
       assert_equal(List[], List[].take(1))
       assert_equal(List[], List[1, 2, 3].take(0))

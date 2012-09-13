@@ -225,6 +225,48 @@ module Immutable
 
     alias at []
 
+    # Returns the +n+th element of +self+. If +n+ is out of range, +IndexError+
+    # returned.
+    #
+    # @overload fetch(n)
+    #   @param [Integer, #to_int] n
+    #   @return [Object] the +n+th element.
+    #   @raise [IndexError] if n is out of rage
+    # @overload fetch(n, ifnone)
+    #   @param [Integer, #to_int] n
+    #   @return ifnone
+    # @overload fetch(n) {|n|}
+    #   @param [Integer, #to_int] n
+    #   @yield [n]
+    #   @yieldparam [Integer, #to_int] n
+    def fetch(*args)
+      alen = args.length
+      n, ifnone = *args
+      
+      unless (1..2).cover?(alen)
+        raise ArgumentError, "wrong number of arguments (#{alen} for 1..2)"
+      end
+
+      raise TypeError unless n.respond_to?(:to_int)
+      int = n.to_int
+
+      return at(int) if int >= 0 && int < length
+
+      if block_given?
+        if alen == 2
+          warn "#{__LINE__}:warning: block supersedes default value argument"
+        end
+
+        yield n
+      else
+        if alen == 2
+          ifnone
+        else
+          raise IndexError, "index #{int} outside of list bounds"
+        end
+      end
+    end
+
     # Converts +self+ to a list.
     #
     # @return [List] a list.
