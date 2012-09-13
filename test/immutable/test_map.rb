@@ -18,6 +18,11 @@ module Immutable
       assert_equal("Map[:a => 1, :b => 2]", Map[a: 1, b: 2].inspect)
     end
 
+    def test_to_s
+      assert_equal("Map[]", Map.empty.to_s)
+      assert_equal("Map[:a => 1, :b => 2]", Map[a: 1, b: 2].to_s)
+    end
+
     def test_insert
       5.times do
         map = (1..100).to_a.shuffle.inject(Map.empty) { |m, k|
