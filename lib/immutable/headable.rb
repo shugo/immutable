@@ -208,6 +208,7 @@ module Immutable
     # Returns the +n+th element of +self+. If +n+ is out of range, +nil+ is
     # returned.
     #
+    # @param [Integer, #to_int] n
     # @return [Object] the +n+th element.
     def [](n)
       if n < 0 || empty?
