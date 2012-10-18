@@ -180,7 +180,7 @@ module Immutable
     #
     # @return [Consable] the concatenated +Consable+ object.
     def flatten
-      foldr(empty) { |x, xs| x + xs }
+      flat_map { |x| x.respond_to?(:to_list) ? x.to_list : Cons(x, empty) }
     end
 
     alias concat flatten
