@@ -180,7 +180,7 @@ module Immutable
     #
     # @return [Consable] the concatenated +Consable+ object.
     def flatten
-      flat_map { |x| x.respond_to?(:to_list) ? x.to_list : Cons(x, empty) }
+      foldr(empty) { |x, xs| safe_append(x, xs) }
     end
 
     alias concat flatten
@@ -190,7 +190,7 @@ module Immutable
     #
     # @return [Consable] the obtained +Consable+ object.
     def flat_map
-      foldr(empty) { |x, xs| yield(x) + xs }
+      foldr(empty) { |x, xs| safe_append(yield(x), xs) }
     end
 
     alias concat_map flat_map
@@ -339,6 +339,12 @@ module Immutable
 
     def Cons(x, y)
       y.cons(x)
+    end
+
+    def safe_append(xs, ys)
+      xs.foldr(ys) { |z, zs| Cons(z, zs) }
+    rescue NoMethodError
+      Cons(xs, ys)
     end
   end
 end

@@ -289,7 +289,9 @@ module Immutable
 
     def test_flat_map
       assert_equal(List[], List[].flat_map {})
-      assert_equal(List["1", "2", "3"], List[1, 2, 3].map(&:to_s))
+      xs = List["foo", "bar"].flat_map {|s| List.from_enum(s.each_char)}
+      assert_equal(List["f", "o", "o", "b", "a", "r"], xs)
+      xs = List["FOO", "BAR"].flat_map {|s| s.upcase}
     end
 
     def test_find
