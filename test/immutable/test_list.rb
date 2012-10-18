@@ -14,7 +14,7 @@ module Immutable
     def test_s_from_enum
       assert_equal(List[], List.from_enum([]))
       assert_equal(List[1, 2, 3], List.from_enum(1..3))
-      assert_equal(List["a", "b", "c"], List.from_enum("abc".chars))
+      assert_equal(List["a", "b", "c"], List.from_enum("abc".each_char))
     end
 
     def test_head
