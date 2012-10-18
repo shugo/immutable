@@ -135,7 +135,7 @@ module Immutable
     # Reduces +self+ using +block+ from right to left. +e+ is used as the
     # starting value. For example:
     #
-    #   List[1, 2, 3].foldr(9) { |x, y| x + y } #=> 1 - (2 - (3 - 9)) = -7
+    #   List[1, 2, 3].foldr(9) { |x, y| x - y } #=> 1 - (2 - (3 - 9)) = -7
     #
     # @param [Object] e the start value.
     # @return [Object] the reduced value.
@@ -166,7 +166,7 @@ module Immutable
     # Reduces +self+ using +block+ from left to right. +e+ is used as the
     # starting value. For example:
     #
-    #   List[1, 2, 3].foldl(9) { |x, y| x + y } #=> ((9 - 1) - 2) - 3 = 3
+    #   List[1, 2, 3].foldl(9) { |x, y| x - y } #=> ((9 - 1) - 2) - 3 = 3
     #
     # @param [Object] e the start value.
     # @return [Object] the reduced value.
