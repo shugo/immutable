@@ -76,6 +76,84 @@ module Immutable
       end
     end
 
+    def test_each_index
+      list = List[]
+      a = []
+      assert_same(list, list.each_index { |x| a << x })
+      assert_equal([], a)
+      
+      list = List[1, 2, 3]
+      a = []
+      assert_same(list, list.each_index { |x| a << x })
+      assert_equal([0, 1, 2], a)
+      
+      enum = List[1, 2, 3].each_index
+      assert_instance_of(Enumerator, enum)
+      assert_equal(0, enum.next)
+      assert_equal(1, enum.next)
+      assert_equal(2, enum.next)
+      assert_raise(StopIteration) do
+        enum.next
+      end
+    end
+
+    def test_index
+      list = List[]
+      assert_equal(nil, list.index(1))
+
+      list = List[1, 2, 1]
+      assert_equal(0, list.index(1))
+      assert_equal(1, list.index(2))
+      assert_equal(nil, list.index(3))
+
+      verbose = $VERBOSE
+      $VERBOSE = nil
+      list = List[1, 2, 1]
+      assert_equal(0, list.index(1) {|e| e * 2 == 4 })
+      assert_equal(1, list.index(2) {|e| e * 2 == 4 })
+      assert_equal(nil, list.index(3) {|e| e * 2 == 4 })
+      $VERBOSE = verbose
+
+      list = List[1, 2, 1]
+      assert_equal(0, list.index {|e| e * 2 == 2 })
+      assert_equal(1, list.index {|e| e * 2 == 4 })
+      assert_equal(nil, list.index {|e| e * 2 == 6 })
+
+      enum = List[1, 2, 1].index
+      assert_instance_of(Enumerator, enum)
+      assert_equal(0, enum.each {|v|v == 1})
+      assert_equal(1, enum.each {|v|v == 2})
+      assert_equal(nil, enum.each {|v|v == 3})
+    end
+
+    def test_rindex
+      list = List[]
+      assert_equal(nil, list.rindex(1))
+
+      list = List[1, 2, 1]
+      assert_equal(2, list.rindex(1))
+      assert_equal(1, list.rindex(2))
+      assert_equal(nil, list.rindex(3))
+
+      verbose = $VERBOSE
+      $VERBOSE = nil
+      list = List[1, 2, 1]
+      assert_equal(2, list.rindex(1) {|e| e * 2 == 4 })
+      assert_equal(1, list.rindex(2) {|e| e * 2 == 4 })
+      assert_equal(nil, list.rindex(3) {|e| e * 2 == 4 })
+      $VERBOSE = verbose
+
+      list = List[1, 2, 1]
+      assert_equal(2, list.rindex {|e| e * 2 == 2 })
+      assert_equal(1, list.rindex {|e| e * 2 == 4 })
+      assert_equal(nil, list.rindex {|e| e * 2 == 6 })
+
+      enum = List[1, 2, 1].rindex
+      assert_instance_of(Enumerator, enum)
+      assert_equal(2, enum.each {|v|v == 1})
+      assert_equal(nil, enum.each {|v|v == 3})
+    end
+
     def test_foldr
       assert_equal(0, List[].foldr(0, &:+))
       assert_equal(123, List[].foldr(123, &:+))
@@ -237,6 +315,67 @@ module Immutable
       assert_equal(2, List[1, 2, 3][1])
       assert_equal(3, List[1, 2, 3][2])
       assert_equal(nil, List[1, 2, 3][3])
+      assert_equal(2, List[1, 2, 3][1.1])
+      assert_raise TypeError do
+        List[1, 2, 3]['1']
+      end
+    end
+
+    def test_at
+      assert_equal(nil, List[].at(0))
+      assert_equal(1, List[1, 2, 3].at(0))
+      assert_equal(nil, List[1, 2, 3].at(-1))
+      assert_equal(2, List[1, 2, 3].at(1))
+      assert_equal(3, List[1, 2, 3].at(2))
+      assert_equal(nil, List[1, 2, 3].at(3))
+      assert_equal(2, List[1, 2, 3].at(1.1))
+      assert_raise TypeError do
+        List[1, 2, 3].at('1')
+      end
+    end
+
+    def test_fetch
+      assert_raise ArgumentError do
+        List[].fetch
+      end
+
+      assert_raise IndexError do
+        List[].fetch(0)
+      end
+
+      assert_equal(1, List[1, 2, 3].fetch(0))
+
+      assert_raise IndexError do
+        List[1, 2, 3].fetch(-1)
+      end
+
+      assert_equal(2, List[1, 2, 3].fetch(1))
+      assert_equal(3, List[1, 2, 3].fetch(2))
+
+      assert_raise IndexError do
+        List[1, 2, 3].fetch(3)
+      end
+
+      assert_equal(2, List[1, 2, 3].fetch(1.1))
+
+      assert_raise TypeError do
+        List[1, 2, 3].fetch('1')
+      end
+
+      assert_equal(9, List[].fetch(0, 9))
+      assert_equal(2, List[1, 2, 3].fetch(1, 9))
+      assert_equal(9, List[1, 2, 3].fetch(4, 9))
+
+      assert_equal(5, List[].fetch(0) {|n| n + 5 })
+      assert_equal(2, List[1, 2, 3].fetch(1) {|n| n + 5 })
+      assert_equal(8, List[1, 2, 3].fetch(4) {|n| n * 2 })
+
+      verbose = $VERBOSE
+      $VERBOSE = nil
+      assert_equal(5, List[].fetch(0, 9) {|n| n + 5 })
+      assert_equal(2, List[1, 2, 3].fetch(1, 9) {|n| n + 5 })
+      assert_equal(8, List[1, 2, 3].fetch(4, 9) {|n| n * 2 })
+      $VERBOSE = verbose
     end
 
     def test_take

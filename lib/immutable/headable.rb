@@ -121,6 +121,17 @@ module Immutable
       self
     end
 
+    # Calls +block+ once for each index in +self+.
+    # @yield [index]
+    # @yieldparam [Integer] index
+    # @yieldreturn [self]
+    # @return [Enumerator]
+    def each_index
+      return to_enum(__callee__) unless block_given?
+  
+      each_with_index{ |_, idx| yield(idx) }
+    end
+
     # Reduces +self+ using +block+ from right to left. +e+ is used as the
     # starting value. For example:
     #
@@ -210,15 +221,127 @@ module Immutable
     # Returns the +n+th element of +self+. If +n+ is out of range, +nil+ is
     # returned.
     #
+    # @param [Integer, #to_int] n
     # @return [Object] the +n+th element.
     def [](n)
-      if n < 0 || empty?
+      raise TypeError unless n.respond_to?(:to_int)
+      int = n.to_int
+
+      if int < 0 || empty?
         nil
-      elsif n == 0
+      elsif int == 0
         head
       else
-        tail[n - 1]
+        tail[int - 1]
       end
+    end
+
+    alias at []
+
+    # Returns the +n+th element of +self+. If +n+ is out of range, +IndexError+
+    # returned.
+    #
+    # @overload fetch(n)
+    #   @param [Integer, #to_int] n
+    #   @return [Object] the +n+th element.
+    #   @raise [IndexError] if n is out of rage
+    # @overload fetch(n, ifnone)
+    #   @param [Integer, #to_int] n
+    #   @return ifnone
+    # @overload fetch(n) {|n|}
+    #   @param [Integer, #to_int] n
+    #   @yield [n]
+    #   @yieldparam [Integer, #to_int] n
+    def fetch(*args)
+      alen = args.length
+      n, ifnone = *args
+      
+      unless (1..2).cover?(alen)
+        raise ArgumentError, "wrong number of arguments (#{alen} for 1..2)"
+      end
+
+      raise TypeError unless n.respond_to?(:to_int)
+      int = n.to_int
+
+      return at(int) if int >= 0 && int < length
+
+      if block_given?
+        if alen == 2
+          warn "#{__LINE__}:warning: block supersedes default value argument"
+        end
+
+        yield n
+      else
+        if alen == 2
+          ifnone
+        else
+          raise IndexError, "index #{int} outside of list bounds"
+        end
+      end
+    end
+
+    # @overload index(val)
+    #   @return [Integer, nil] index
+    # @overload index
+    #   @return [Enumerator]
+    # @overload index {}
+    #   @yieldreturn [Integer, nil] index
+    def index(*args)
+      alen = args.length
+      val = args.first
+
+      raise ArgumentError unless (0..1).cover?(alen)
+      return to_enum(__callee__) if !block_given? && alen == 0
+
+      if alen == 1
+        if block_given?
+          warn "#{__LINE__}:warning: given block not used"
+        end
+
+        each_with_index { |e, idx|
+          return idx if e == val
+        }
+      else
+        if block_given?
+          each_with_index { |e, idx|
+            return idx if yield(e)
+          }
+        end
+      end
+
+      nil
+    end
+
+    # @overload rindex(val)
+    #   @return [Integer, nil] index
+    # @overload rindex
+    #   @return [Enumerator]
+    # @overload rindex {}
+    #   @yieldreturn [Integer, nil] index
+    def rindex(*args)
+      alen = args.length
+      val = args.first
+
+      raise ArgumentError unless (0..1).cover?(alen)
+      return to_enum(__callee__) if !block_given? && alen == 0
+
+      if alen == 1
+        if block_given?
+          warn "#{__LINE__}:warning: given block not used"
+        end
+
+        reverse_each.with_index { |e, idx|
+          return length - (idx + 1) if e == val
+        }
+      else
+        if block_given?
+          reverse_each.with_index { |e, idx|
+            return length - (idx + 1) if yield(e)
+          }
+        end
+      end
+
+      nil
     end
 
     # Converts +self+ to a list.
