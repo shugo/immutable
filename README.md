@@ -3,18 +3,22 @@ immutable - immutable data structures for Ruby
 
 This project aims to provide immutable data structures for Ruby.
 
-Install
-========================
+[![Build Status](https://secure.travis-ci.org/shugo/immutable.png)](http://travis-ci.org/shugo/immutable)
 
-	$ gem install immutable
+Install
+-------
+
+```bash
+$ gem install immutable
+```
 
 Documentation
-========================
+-------------
 
 * [API Reference](http://rubydoc.info/github/shugo/immutable/frames)
 
 License
-========================
+-------
 
 (The MIT License)
 
