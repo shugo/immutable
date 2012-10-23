@@ -2,11 +2,13 @@
 module Immutable
 end
 
-old_compile_option = RubyVM::InstructionSequence.compile_option
-RubyVM::InstructionSequence.compile_option = {
-  :tailcall_optimization => true,
-  :trace_instruction => false
-}
+if defined?(RubyVM)
+  old_compile_option = RubyVM::InstructionSequence.compile_option
+  RubyVM::InstructionSequence.compile_option = {
+    :tailcall_optimization => true,
+    :trace_instruction => false
+  }
+end
 begin
   require_relative "immutable/list"
   require_relative "immutable/map"
@@ -16,5 +18,7 @@ begin
   require_relative "immutable/output_restricted_deque"
   require_relative "immutable/deque"
 ensure
-  RubyVM::InstructionSequence.compile_option = old_compile_option
+  if defined?(RubyVM)
+    RubyVM::InstructionSequence.compile_option = old_compile_option
+  end
 end
