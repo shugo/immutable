@@ -7,3 +7,8 @@ rvm:
 matrix:
   allow_failures:
     - rvm: jruby-head
+
+notifications:
+  email:
+    on_success: never
+    on_failure: always
