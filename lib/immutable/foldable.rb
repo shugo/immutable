@@ -26,14 +26,14 @@ module Immutable
     #
     # @return [#+] the sum of the numbers.
     def sum
-      foldl(0, &:+)
+      foldl(0) { |x, y| x + y }
     end
 
     # Computes the product of the numbers in +self+.
     #
     # @return [#*] the product of the numbers.
     def product
-      foldl(1, &:*)
+      foldl(1) { |x, y| x * y }
     end
   end
 end
