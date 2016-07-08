@@ -66,6 +66,22 @@ module Immutable
       end
     end
 
+    # @return [Boolean]
+    def ==(x)
+      x.is_a?(self.class) && (to_h == x.to_h)
+    end
+
+    alias === ==
+
+    def eql?(x)
+      x.is_a?(self.class) && to_h.eql?(x.to_h)
+    end
+
+    # @return [Integer]
+    def hash
+      to_h.hash
+    end
+
     # @return [String]
     def inspect
       "Map[" + foldr_with_key("") { |k, v, s|
@@ -81,9 +97,17 @@ module Immutable
     alias to_s inspect
 
     # Calls +block+ once for each key/value in +self+.
+    # @yield [key, element]
+    # @yieldreturn [self]
+    # @return [self]
     def each(&block)
+      return to_enum(__callee__) unless block_given?
+
       foldl_with_key(nil) { |x, k, v| yield([k, v]) }
+      self
     end
+
+    alias each_pair each
 
     # Folds the values in +self+ from right to left.
     def foldr(e)
@@ -103,6 +127,11 @@ module Immutable
     # Maps the given block over all keys and values in +self+.
     def map_with_key
       foldr_with_key(List[]) { |k, v, xs| Cons[yield(k, v), xs] }
+    end
+
+    # @return [Hash]
+    def to_h
+      Hash[each_pair.to_a]
     end
 
     # :nodoc:

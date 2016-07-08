@@ -57,14 +57,94 @@ module Immutable
       end
     end
 
+    def test_eq
+      assert_same(true, Map[] == Map[])
+      assert_same(true, Map[a: 1, c: 3, b: 2] == Map[c: 3, b: 2, a: 1])
+      assert_same(false, Map[] == {})
+      assert_same(false, Map[a: 1, c: 3, b: 2] == Map[c: 3, b: 2, a: 1, A: 1])
+      assert_same(false, Map[a: 1, c: 3, b: 2] == Map[c: 3, b: 2, a: '1'])
+      assert_same(false, Map[a: 1, c: 3, b: 2] == Map[c: 3, b: 2])
+    end
+
+    def test_case_equal
+      assert_same(true, Map[] === Map[])
+      assert_same(true, Map[a: 1, c: 3, b: 2] === Map[c: 3, b: 2, a: 1])
+      assert_same(false, Map[] === {})
+      assert_same(false, Map[a: 1, c: 3, b: 2] === Map[c: 3, b: 2, a: 1, A: 1])
+      assert_same(false, Map[a: 1, c: 3, b: 2] === Map[c: 3, b: 2, a: '1'])
+      assert_same(false, Map[a: 1, c: 3, b: 2] === Map[c: 3, b: 2])
+    end
+
+    def test_eql
+      assert_same(true, Map[] == Map[])
+      assert_same(true, Map[a: 1, c: 3, b: 2].eql?(Map[c: 3, b: 2, a: 1]))
+      assert_same(false, Map[].eql?({}))
+      assert_same(false, Map[a: 1, c: 3, b: 2].eql?(Map[c: 3, b: 2, a: 1, A: 1]))
+      assert_same(false, Map[a: 1, c: 3, b: 2].eql?(Map[c: 3, b: 2, a: '1']))
+      assert_same(false, Map[a: 1, c: 3, b: 2].eql?(Map[c: 3, b: 2]))
+    end
+
+    def test_hash_key
+      map1 = Map[1 => 1, 2 => 3]
+      map2 = Map[1 => 1, 2 => 3]
+      map3 = Map[1 => 1, 2.0 => 3]
+      hash = {map1 => true}
+      assert_same(true, hash.has_key?(map1))
+      assert_same(true, hash.has_key?(map2))
+      assert_same(false, hash.has_key?(map3))
+    end
+
     def test_each
       a = []
-      Map[].each { |x| a << x }
+      map = Map[]
+      ret = map.each { |x| a << x }
       assert_equal([], a)
+      assert_same(ret, map)
+      enum = map.each
+      assert_instance_of(Enumerator, enum)
 
       a = []
-      Map[a: 1, c: 3, b: 2].each { |x| a << x }
+      map = Map[a: 1, c: 3, b: 2]
+      ret = map.each { |x| a << x }
       assert_equal([[:a, 1], [:b, 2], [:c, 3]], a)
+      assert_same(ret, map)
+      enum = map.each
+      assert_instance_of(Enumerator, enum)
+      assert_equal([:a, 1], enum.next)
+      assert_equal([:b, 2], enum.next)
+      assert_equal([:c, 3], enum.next)
+      assert_raise(StopIteration) do
+        enum.next
+      end
+    end
+
+    def test_each_pair
+      a = []
+      map = Map[]
+      ret = map.each_pair { |x| a << x }
+      assert_equal([], a)
+      assert_same(ret, map)
+      enum = map.each_pair
+      assert_instance_of(Enumerator, enum)
+
+      a = []
+      map = Map[a: 1, c: 3, b: 2]
+      ret = map.each_pair { |x| a << x }
+      assert_equal([[:a, 1], [:b, 2], [:c, 3]], a)
+      assert_same(ret, map)
+      enum = map.each_pair
+      assert_instance_of(Enumerator, enum)
+      assert_equal([:a, 1], enum.next)
+      assert_equal([:b, 2], enum.next)
+      assert_equal([:c, 3], enum.next)
+      assert_raise(StopIteration) do
+        enum.next
+      end
+    end
+
+    def test_to_h
+      assert_equal({}, Map[].to_h)
+      assert_equal({a: 1, c: 3, b: 2}, Map[a: 1, c: 3, b: 2].to_h)
     end
 
     def test_foldr
