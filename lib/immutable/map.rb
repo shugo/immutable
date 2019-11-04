@@ -218,41 +218,26 @@ module Immutable
         @right.foldl_with_key(yield(l, @key, @value), &block)
       end
 
+      def deconstruct
+        [@left, @key, @value, @right]
+      end
+
       private
 
-      def balance(left, key, value, right)
-        # balance (T R a x b) y (T R c z d) = T R (T B a x b) y (T B c z d)
-        if left.red? && right.red?
-          RedFork[left.make_black, key, value, right.make_black]
-        # balance (T R (T R a x b) y c) z d = T R (T B a x b) y (T B c z d)
-        elsif left.red? && left.left.red?
-          RedFork[
-            left.left.make_black, left.key, left.value,
-            BlackFork[left.right, key, value, right]
-          ]
-        # balance (T R a x (T R b y c)) z d = T R (T B a x b) y (T B c z d)
-        elsif left.red? && left.right.red?
-          RedFork[
-            BlackFork[left.left, left.key, left.value, left.right.left],
-            left.right.key, left.right.value,
-            BlackFork[left.right.right, key, value, right]
-          ]
-        # balance a x (T R b y (T R c z d)) = T R (T B a x b) y (T B c z d)
-        elsif right.red? && right.right.red?
-          RedFork[
-            BlackFork[left, key, value, right.left],
-            right.key, right.value, right.right.make_black
-          ]
-        # balance a x (T R (T R b y c) z d) = T R (T B a x b) y (T B c z d)
-        elsif right.red? && right.left.red?
-          RedFork[
-            BlackFork[left, key, value, right.left.left],
-            right.left.key, right.left.value,
-            BlackFork[right.left.right, right.key, right.value, right.right]
-          ]
-        # balance a x b = T B a x b
-        else
-          BlackFork[left, key, value, right]
+      def balance(*args)
+        case args
+        in [RedFork[a, xk, xv, b], yk, yv, RedFork[c, zk, zv, d]]
+          RedFork[BlackFork[a, xk, xv, b], yk, yv, BlackFork[c, zk, zv, d]]
+        in [RedFork[RedFork[a, xk, xv, b], yk, yv, c], zk, zv, d]
+          RedFork[BlackFork[a, xk, xv, b], yk, yv, BlackFork[c, zk, zv, d]]
+        in [RedFork[a, xk, xv, RedFork[b, yk, yv, c]], zk, zv, d]
+          RedFork[BlackFork[a, xk, xv, b], yk, yv, BlackFork[c, zk, zv, d]]
+        in [a, xk, xv, RedFork[b, yk, yv, RedFork[c, zk, zv, d]]]
+          RedFork[BlackFork[a, xk, xv, b], yk, yv, BlackFork[c, zk, zv, d]]
+        in [a, xk, xv, RedFork[RedFork[b, yk, yv, c], zk, zv, d]]
+          RedFork[BlackFork[a, xk, xv, b], yk, yv, BlackFork[c, zk, zv, d]]
+        in [a, xk, xv, b]
+          BlackFork[a, xk, xv, b]
         end
       end
 
