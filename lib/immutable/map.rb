@@ -257,36 +257,33 @@ module Immutable
         end
       end
 
-      def bal_left(left, key, value, right)
-        if left.red?
-          RedFork[left.make_black, key, value, right]
-        elsif right.black?
-          balance(left, key, value, right.make_red)
-        elsif right.red? && right.left.black?
+      def bal_left(*args)
+        case args
+        in [RedFork[a, xk, xv, b], yk, yv, c]
+          RedFork[BlackFork[a, xk, xv, b], yk, yv, c]
+        in [a, xk, xv, BlackFork[b, yk, yv, c]]
+          balance(a, xk, xv, RedFork[b, yk, yv, c])
+        in [a, xk, xv, RedFork[BlackFork[b, yk, yv, c], zk, zv, d]]
           RedFork[
-            BlackFork[left, key, value, right.left.left],
-            right.left.key, right.left.value,
-            balance(right.left.right, right.key, right.value,
-                    sub1(right.right))
+            BlackFork[a, xk, xv, b],
+            yk, yv,
+            balance(c, zk, zv, sub1(d))
           ]
-        else
-          raise ScriptError, "should not reach here"
         end
       end
 
-      def bal_right(left, key, value, right)
-        if right.red?
-          RedFork[left, key, value, right.make_black]
-        elsif left.black?
-          balance(left.make_red, key, value, right)
-        elsif left.red? && left.right.black?
+      def bal_right(*args)
+        return case args
+        in [a, xk, xv, RedFork[b, yk, yv, c]]
+          RedFork[a, xk, xv, BlackFork[b, yk, yv, c]]
+        in [BlackFork[a, xk, xv, b], yk, yv, c]
+          balance(RedFork[a, xk, xv, b], yk, yv, c)
+        in [RedFork[a, xk, xv, BlackFork[b, yk, yv, c]], zk, zv, d]
           RedFork[
-            balance(sub1(left.left), left.key, left.value, left.right.left),
-            left.right.key, left.right.value,
-            BlackFork[left.right.right, key, value, right]
+            balance(sub1(a), xk, xv, b),
+            yk, yv,
+            BlackFork[c, zk, zv, d]
           ]
-        else
-          raise ScriptError, "should not reach here"
         end
       end
 
