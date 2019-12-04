@@ -273,7 +273,7 @@ module Immutable
       end
 
       def bal_right(*args)
-        return case args
+        case args
         in [a, xk, xv, RedFork[b, yk, yv, c]]
           RedFork[a, xk, xv, BlackFork[b, yk, yv, c]]
         in [BlackFork[a, xk, xv, b], yk, yv, c]
